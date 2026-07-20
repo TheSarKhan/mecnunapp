@@ -26,13 +26,45 @@ npm run typecheck
 
 | Harada | `EXPO_PUBLIC_API_URL` |
 | --- | --- |
-| iOS simulator | `http://localhost:8080` |
-| Android emulator | `http://10.0.2.2:8080` |
-| Fiziki cihaz | `http://<LAN-IP>:8080` (məs. `http://192.168.1.20:8080`) |
+| **Canlı server (default)** | `https://mecnun.sarkhan.az` |
+| iOS simulator + lokal backend | `http://localhost:8090` |
+| Android emulator + lokal backend | `http://10.0.2.2:8090` |
+| Fiziki cihaz + lokal backend | `http://<LAN-IP>:8090` (məs. `http://192.168.1.8:8090`) |
 
-Backend işləmirsə app açılır, amma onboarding-in son addımı xəta verir — `docker compose up` işlətdiyindən əmin ol.
+Backend işləmirsə app açılır, amma giriş/qeydiyyat xəta verir.
 
 Yalnız `EXPO_PUBLIC_` prefiksli dəyişənlər bundle-a düşür. `.env` dəyişəndən sonra Expo-nu restart et.
+
+## APK / build (EAS)
+
+Build konfiqurasiyası `eas.json`-dadır. **`EXPO_PUBLIC_*` dəyərləri orada yazılıb, `.env`-də
+yox** — `.env` repoda deyil və hər maşında fərqlidir, build isə təkrarlana bilən olmalıdır.
+
+```bash
+npx eas-cli build --platform android --profile preview     # paylaşıla bilən APK
+npx eas-cli build --platform android --profile production  # Play Store üçün .aab
+npx eas-cli build:list                                     # keçmiş build-lər + linklər
+```
+
+| Profil | Nəticə | Nə üçün |
+| --- | --- | --- |
+| `preview` | `.apk` | Telefona birbaşa quraşdırılır, mağaza lazım deyil |
+| `production` | `.aab` | Play Store yalnız bunu qəbul edir |
+| `development` | `.apk` + dev client | Metro-ya qoşulur, native modul debug üçün |
+
+### Google girişi APK-da hələ işləmir
+
+`GoogleSignInButton` Android-də `EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID` tələb edir; o
+qurulmayana qədər düymə sadəcə **görünmür** (email/şifrə girişi işləyir). Bu, toyuq-yumurta
+məsələsidir — Android OAuth client yaratmaq üçün imzalayan keystore-un SHA-1-i lazımdır:
+
+```bash
+npx eas-cli credentials --platform android    # SHA-1 fingerprint-i göstərir
+```
+
+Sonra Google Cloud Console → Credentials → OAuth client ID → **Android**, paket
+`com.mecnun.app` + həmin SHA-1. Alınan ID `eas.json`-un `env` bölməsinə
+`EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID` kimi yazılır və APK **yenidən** qurulur.
 
 ## Struktur
 

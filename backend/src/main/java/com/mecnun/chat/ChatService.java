@@ -13,11 +13,13 @@ import com.mecnun.common.error.ApiException;
 import com.mecnun.limits.LimitService;
 import com.mecnun.memory.MemoryService;
 import com.mecnun.memory.MessagesAppendedEvent;
+import com.mecnun.safety.SafetyService;
 import com.mecnun.user.domain.User;
 import com.mecnun.user.domain.UserProfile;
 import com.mecnun.user.repository.UserProfileRepository;
 import com.mecnun.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
@@ -38,11 +41,16 @@ public class ChatService {
     private final LimitService limitService;
     private final BotReplyGenerator botReplyGenerator;
     private final MemoryService memoryService;
+    private final SafetyService safetyService;
     private final ApplicationEventPublisher events;
 
     @Transactional
     public SendMessageResponse send(UUID userId, SendMessageRequest request) {
-        if (!limitService.tryConsume(userId)) {
+        // Checked BEFORE the daily limit on purpose. Someone in crisis must never be answered
+        // with a paywall, and must never be silently dropped because they ran out of messages.
+        boolean crisis = safetyService.isCrisis(request.content());
+
+        if (!crisis && !limitService.tryConsume(userId)) {
             throw ApiException.limitReached("Bu günlük məcnunluq bəsdir 😌 Sabah davam.");
         }
 
@@ -53,6 +61,10 @@ public class ChatService {
                 .sender(Sender.USER)
                 .content(request.content())
                 .build());
+
+        if (crisis) {
+            return respondWithSafety(userId, conversation, userMessage);
+        }
 
         // Recall is driven by what the user just said, not by the whole history.
         List<String> memoryFacts = memoryService.recall(userId, request.content());
@@ -118,13 +130,48 @@ public class ChatService {
                 .toList();
     }
 
+    /**
+     * Answers with the safety response instead of the persona.
+     *
+     * Three things are deliberately skipped: the persona (its tone is wrong here), the daily limit
+     * (already not consumed above), and the memory-extraction event — a crisis exchange must not
+     * become a stored "fact" about someone.
+     */
+    private SendMessageResponse respondWithSafety(UUID userId,
+                                                  Conversation conversation,
+                                                  Message userMessage) {
+        List<MessageDto> botMessages = persistBotMessages(conversation, safetyService.response(), true);
+
+        conversation.setLastMessageAt(Instant.now());
+        // Moves the extraction watermark past this exchange so no later sweep reads it either.
+        conversation.setLastExtractedAt(Instant.now());
+        conversationRepository.save(conversation);
+
+        // Logged without the message text: knowing it happened is operationally necessary,
+        // copying what the person wrote into the logs is not.
+        log.warn("Təhlükəsizlik qatı işə düşdü: user={} conversation={}", userId, conversation.getId());
+
+        return new SendMessageResponse(
+                conversation.getId(),
+                toDto(userMessage),
+                botMessages,
+                limitService.status(userId).remaining());
+    }
+
     private List<MessageDto> persistBotMessages(Conversation conversation, List<String> bubbles) {
+        return persistBotMessages(conversation, bubbles, false);
+    }
+
+    private List<MessageDto> persistBotMessages(Conversation conversation,
+                                                List<String> bubbles,
+                                                boolean safety) {
         List<MessageDto> saved = new ArrayList<>(bubbles.size());
         for (String bubble : bubbles) {
             Message message = messageRepository.save(Message.builder()
                     .conversationId(conversation.getId())
                     .sender(Sender.BOT)
                     .content(bubble)
+                    .safety(safety)
                     .build());
             saved.add(toDto(message));
         }
@@ -155,6 +202,9 @@ public class ChatService {
     private List<ChatContext.Turn> historyExcluding(Conversation conversation, UUID excludedMessageId) {
         return messageRepository.findByConversationIdOrderByCreatedAtAsc(conversation.getId()).stream()
                 .filter(m -> !m.getId().equals(excludedMessageId))
+                // Safety replies are a system intervention, not persona speech. Feeding them back
+                // taught the model to repeat helpline numbers at users who had moved on.
+                .filter(m -> !m.isSafety())
                 .map(m -> new ChatContext.Turn(m.getSender() == Sender.USER, m.getContent()))
                 .toList();
     }

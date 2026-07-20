@@ -30,6 +30,16 @@ public class Message {
     @Column(name = "content", nullable = false, columnDefinition = "text")
     private String content;
 
+    /**
+     * True for the safety layer's own reply.
+     *
+     * Shown to the user like any other bot message, but excluded from the history sent to the
+     * model — otherwise the persona reads it back and starts repeating helpline numbers.
+     */
+    @Column(name = "is_safety", nullable = false)
+    @Builder.Default
+    private boolean safety = false;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 

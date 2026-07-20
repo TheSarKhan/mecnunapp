@@ -29,6 +29,12 @@
       "expo-font",
       "expo-web-browser",
       "expo-video"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1236cdfd-5fa3-4448-9dc0-af6955d3810b"
+      }
+    },
+    "owner": "sarkhanvibes"
   }
 }

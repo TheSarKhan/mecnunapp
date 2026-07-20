@@ -1,0 +1,39 @@
+{
+  "cli": {
+    "version": ">= 20.0.0",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": { "buildType": "apk" },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://mecnun.sarkhan.az",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "149927371809-rad3p8b4in4vjp42rkf09h0dj6l5ojmn.apps.googleusercontent.com"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://mecnun.sarkhan.az",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "149927371809-rad3p8b4in4vjp42rkf09h0dj6l5ojmn.apps.googleusercontent.com"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://mecnun.sarkhan.az",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "149927371809-rad3p8b4in4vjp42rkf09h0dj6l5ojmn.apps.googleusercontent.com"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
