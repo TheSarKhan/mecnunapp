@@ -10,6 +10,16 @@
     "error": "Nəsə səhv getdi. Bir azdan yenidən yoxla.",
     "skip": "Keç"
   },
+  "login": {
+    "title": "Hesabına gir",
+    "subtitle": "Hesabın varsa buradan gir. Yoxdursa geri qayıt və başla.",
+    "identifier": "E-poçt və ya nömrə",
+    "password": "Şifrə",
+    "submit": "Gir",
+    "google": "Google ilə davam et",
+    "haveAccount": "Hesabım var",
+    "missingFields": "E-poçt və şifrəni yaz."
+  },
   "splash": {
     "wordmark": "məcnun",
     "tagline": "Dərdini danış. Burda qulaq asan var."

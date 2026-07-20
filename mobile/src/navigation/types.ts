@@ -1,5 +1,6 @@
 export type RootStackParamList = {
   Splash: undefined;
+  Login: undefined;
   AgeGate: undefined;
   GenderSelect: undefined;
   PersonaSelect: undefined;

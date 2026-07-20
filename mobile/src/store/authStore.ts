@@ -20,6 +20,7 @@ interface AuthState {
   bootstrap: () => Promise<void>;
   register: (identifier: string, password: string) => Promise<void>;
   login: (identifier: string, password: string) => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshMe: () => Promise<void>;
   setMe: (me: Me) => void;
@@ -83,8 +84,22 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (identifier, password) => {
     const tokens = await authApi.login(identifier, password);
     await saveTokens(tokens.accessToken, tokens.refreshToken);
+    await AsyncStorage.setItem(ONBOARDED_KEY, 'true');
     const me = await userApi.getMe();
     set({ authenticated: true, onboarded: true, me });
+  },
+
+  loginWithGoogle: async (idToken) => {
+    const tokens = await authApi.loginWithGoogle(idToken);
+    await saveTokens(tokens.accessToken, tokens.refreshToken);
+    // A Google account created just now has no profile answers yet, so onboarding still runs;
+    // an existing one already has them and goes straight through.
+    const me = await userApi.getMe();
+    const complete = me.relationshipStatus !== 'UNSPECIFIED';
+    if (complete) {
+      await AsyncStorage.setItem(ONBOARDED_KEY, 'true');
+    }
+    set({ authenticated: true, onboarded: complete, me });
   },
 
   logout: async () => {

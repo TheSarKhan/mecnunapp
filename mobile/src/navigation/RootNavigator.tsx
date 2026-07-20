@@ -7,6 +7,7 @@ import { useAuthStore } from '../store';
 import type { RootStackParamList } from './types';
 
 import SplashScreen from '../screens/SplashScreen';
+import LoginScreen from '../screens/LoginScreen';
 import AgeGateScreen from '../screens/onboarding/AgeGateScreen';
 import GenderSelectScreen from '../screens/onboarding/GenderSelectScreen';
 import PersonaSelectScreen from '../screens/onboarding/PersonaSelectScreen';
@@ -61,6 +62,7 @@ export default function RootNavigator() {
                 <Stack.Screen name="GenderSelect" component={GenderSelectScreen} />
                 <Stack.Screen name="PersonaSelect" component={PersonaSelectScreen} />
                 <Stack.Screen name="ProfileSetup" component={ProfileSetupScreen} />
+                <Stack.Screen name="Login" component={LoginScreen} />
               </>
             )}
             <Stack.Screen name="Chat" component={ChatScreen} />

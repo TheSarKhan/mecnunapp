@@ -44,17 +44,22 @@ export default function PaywallScreen() {
         </View>
 
         <View style={styles.plans}>
+          {/*
+            Brief v2 §8: 10 AZN/ay başlanğıc. Yearly = 10 ay qiymətinə 12 ay ("2 ay pulsuz").
+            Hardcoded until RevenueCat offerings drive this — see the TODO above; prices must be
+            changeable without an app update, which is the whole reason RevenueCat is in the stack.
+          */}
           <Pressable onPress={() => setPlan('yearly')}>
             <PlanCard
               name={t('paywall.yearly')}
-              price="₼39.99"
+              price="₼100"
               period="il"
               note={t('paywall.yearlyNote')}
               selected={plan === 'yearly'}
             />
           </Pressable>
           <Pressable onPress={() => setPlan('monthly')}>
-            <PlanCard name={t('paywall.monthly')} price="₼4.99" period="ay" selected={plan === 'monthly'} />
+            <PlanCard name={t('paywall.monthly')} price="₼10" period="ay" selected={plan === 'monthly'} />
           </Pressable>
         </View>
       </ScrollView>

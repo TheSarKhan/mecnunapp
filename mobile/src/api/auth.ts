@@ -15,3 +15,9 @@ export async function refresh(refreshToken: string): Promise<TokenResponse> {
   const { data } = await api.post<TokenResponse>('/auth/refresh', { refreshToken });
   return data;
 }
+
+/** Exchanges a Google ID token for our own tokens; creates the account if it is the first time. */
+export async function loginWithGoogle(idToken: string): Promise<TokenResponse> {
+  const { data } = await api.post<TokenResponse>('/auth/google', { idToken });
+  return data;
+}
