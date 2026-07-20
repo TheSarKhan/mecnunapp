@@ -94,7 +94,7 @@ Mock cavabı real Gemini Flash ilə əvəzləyirik və personaya səs veririk.
 *Brief §7.3, §7.4 · timeline həftə 4*
 
 **İşlər**
-1. Extraction tetiyi: hər ~15 mesajdan bir və/və ya sessiya sonunda (bax: açıq qərar §5).
+1. **Extraction tetiyi (qərar verilib):** arxa planda hər **10 mesajdan bir** + söhbət **30 dəqiqə sakitləşəndə** qalanı yığan `@Scheduled` sweep. İstifadəçiyə görünən "sessiya" anlayışı yoxdur — ChatGPT-dəki kimi. Çıxarma cavab axınından ayrıdır, cavabı gözlətmir.
 2. Extraction promptu — strukturlu JSON: ex adı, münasibət statusu, açar hadisələr, təkrarlanan mövzular, emosional vəziyyət.
 3. Embedding (`text-embedding-004`, 768 — sxem artıq buna görə qurulub).
 4. `MemoryFactRepository`-yə native pgvector sorğusu: `ORDER BY embedding <=> :q LIMIT k`.
@@ -116,7 +116,7 @@ Mock cavabı real Gemini Flash ilə əvəzləyirik və personaya səs veririk.
 2. Mobil: `react-native-purchases`, offerings-dən dinamik qiymət (paywall hazırda statik "₼39.99/₼4.99" göstərir — brief §8 **10 AZN/ay** deyir, düzəliş burada).
 3. AdMob SSV: ECDSA imza yoxlaması, `verifier-keys.json` cache-i, `key_id` üzrə açar seçimi. Replay qoruması artıq var (`transaction_id` unique).
 4. Mobil: `react-native-google-mobile-ads` rewarded axını.
-5. Premium limitinin dəqiqləşdirilməsi (bax: açıq qərar §5).
+5. Premium limiti 500/gün tavan olaraq qalır (qərar verilib, §6) — marketinqdə "limitsiz".
 
 **Bitdi sayılır ki** — sandbox alışı premium açır və söyüş toggle-ı işə salır; reklama baxış limiti gündə max 3 dəfə artırır; imzasız SSV çağırışı **rədd olunur**.
 
@@ -173,11 +173,9 @@ Qərar veriləndə bu bölmədən silinir və §6-ya yazılır.
 
 | # | Sual | Niyə vacibdir | Nə vaxt lazımdır |
 | --- | --- | --- | --- |
-| 1 | **"Sessiya" nədir?** Yaddaş extraction-ın tetiyi — vaxt fasiləsi (məs. 30 dəq sükut), app background-a keçməsi, yoxsa sadəcə hər 15 mesaj? | Həm xərcə, həm yaddaşın keyfiyyətinə birbaşa təsir edir | M2 başlayanda |
-| 2 | **Şifrələmə üsulu** — sütun səviyyəsində (axtarış itir, açar idarəsi lazım) yoxsa disk/at-rest (sadə, amma DB-yə çıxışı olan görür)? | Brief §7.9 "şifrəli" deyir, üsulu demir | M4 |
-| 3 | **Premium limiti** — brief "limitsiz" deyir, kodda abuse tavanı olaraq 500/gün var. Tavan qalsın? | Xərc riski vs vəd | M3 |
-| 4 | **`MARRIED` statusu** — brief 4 status sadalayır (subay/münasibətdə/yeni ayrılıb/qəlizdir), kodda 6 var | Kiçik, amma onboarding copy-sinə təsir edir | M1 copy passında |
-| 5 | **mecnun.com qeydiyyatı + @mecnun handle-ları** | Brief §13-də açıq iş; store submission-a qədər lazımdır | M6-dan əvvəl |
+| 1 | **Şifrələmə üsulu** — sütun səviyyəsində (axtarış itir, açar idarəsi lazım) yoxsa disk/at-rest (sadə, amma DB-yə çıxışı olan görür)? | Brief §7.9 "şifrəli" deyir, üsulu demir | M4 |
+| 2 | **`MARRIED` statusu** — brief 4 status sadalayır (subay/münasibətdə/yeni ayrılıb/qəlizdir), kodda 6 var | Kiçik, amma onboarding copy-sinə təsir edir | M1 copy passında |
+| 3 | **mecnun.com qeydiyyatı + @mecnun handle-ları** | Brief §13-də açıq iş; store submission-a qədər lazımdır | M6-dan əvvəl |
 
 ---
 
@@ -186,6 +184,8 @@ Qərar veriləndə bu bölmədən silinir və §6-ya yazılır.
 Brief §13 məhsul qərarlarını saxlayır; bu, texniki qərarları saxlayır. Səbəbləri [architecture.md](architecture.md)-dədir.
 
 - **Domen `mecnun.com`** — brief §2.1/§13-dəki `mecnun.app` əvəzlənib
+- **Yaddaş çıxarma tetiyi: "ChatGPT kimi" — istifadəçiyə görünən sessiya anlayışı yoxdur.** Arxa planda hər **10 mesajdan bir**, üstəgəl söhbət **30 dəqiqə sakitləşəndə** qalanı yığan planlaşdırılmış sweep. Çıxarma cavab axınından tam ayrıdır — cavabın sürətinə təsir etmir. Rədd edilən alternativ: hər mesajdan sonra çıxarma — LLM xərcini iki qat edirdi, yaddaşın keyfiyyətini isə nəzərəçarpan dərəcədə artırmırdı
+- **Premium limiti: 500/gün tavan qalır.** Brief §8 "limitsiz" deyir; tavan istifadəçi üçün praktiki olaraq görünməzdir (ortalama sessiya hədəfi 8 mesajdır) və abuse/xərc partlayışına qarşı yeganə qoruyucudur. Marketinq mətnində "limitsiz" qalır — bu, texniki tavandır, məhsul vədi deyil
 - **Reklam limiti gündə 3** — brief §8-ə uyğunlaşdırıldı (5 idi)
 - **Expo SDK 54** — ən son SDK yox; köhnə iPhone-larda Expo Go uyğunsuzluğuna görə. Development build-ə keçəndə qalxa bilər
 - **Adminer portu 8082** — 8081 Metro-nundur
