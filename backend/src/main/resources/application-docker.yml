@@ -8,3 +8,8 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST:redis}
       port: ${SPRING_REDIS_PORT:6379}
+
+mecnun:
+  dev:
+    # Lokal iş üçün bilinən hesab. Prod profilində qəti qurulmamalıdır.
+    seed-test-user: true

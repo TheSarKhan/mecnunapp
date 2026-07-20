@@ -13,6 +13,8 @@ mecnun:
   # no rebuild, no restart. Unset in docker/prod, where the classpath copy is used.
   ai:
     dir: ../ai
+  dev:
+    seed-test-user: true
 
 logging:
   level:

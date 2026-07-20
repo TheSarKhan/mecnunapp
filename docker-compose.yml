@@ -55,7 +55,9 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash}
       REVENUECAT_WEBHOOK_SECRET: ${REVENUECAT_WEBHOOK_SECRET:-}
-      ADMOB_SSV_PUBLIC_KEY: ${ADMOB_SSV_PUBLIC_KEY:-}
+      # AdMob SSV açarlarını Google dərc edir — burada açar yoxdur, yalnız yoxlamanı söndürmə açarı.
+      ADMOB_SSV_VERIFICATION_ENABLED: ${ADMOB_SSV_VERIFICATION_ENABLED:-true}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
     ports:
       # Override with BACKEND_PORT when something else on the machine already holds 8080.
       - "${BACKEND_PORT:-8080}:8080"

@@ -52,6 +52,9 @@ springdoc:
     path: /v3/api-docs
 
 mecnun:
+  cors:
+    # Vergüllə ayrılmış origin siyahısı (pattern qəbul edir). Dev-də Next.js `frontend/`.
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
   jwt:
     # CHANGE IN PRODUCTION. HS256 requires >= 32 bytes.
     secret: ${JWT_SECRET:dev-only-secret-change-me-please-32-bytes-min}
@@ -94,7 +97,13 @@ mecnun:
   revenuecat:
     webhook-secret: ${REVENUECAT_WEBHOOK_SECRET:}
   admob:
-    ssv-public-key: ${ADMOB_SSV_PUBLIC_KEY:}
+    # Açarı biz qurmuruq — Google dərc edir, hər çağırış key_id ilə hansını işlətdiyini bildirir.
+    verifier-keys-url: https://www.gstatic.com/admob/reward/verifier-keys.json
+    # Yalnız lokal test üçün false. Söndürülsə URL-i bilən hər kəs özünə limit yaza bilər.
+    ssv-verification-enabled: ${ADMOB_SSV_VERIFICATION_ENABLED:true}
+  google:
+    # Mobil app-in aldığı ID token bu audience üçün yoxlanılır.
+    client-id: ${GOOGLE_CLIENT_ID:}
 
 logging:
   level:

@@ -7,9 +7,10 @@ import com.mecnun.limits.LimitService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 /**
- * AdMob server-side verification (SSV) callback. AdMob calls this as a GET with query params
- * including `user_id`, `transaction_id`, `reward_amount`, `signature` and `key_id`.
+ * AdMob rewarded-ad server-side verification callback.
+ *
+ * AdMob calls this as a GET with user_id, transaction_id, reward_amount, signature and key_id.
+ * The reward is granted only after the signature checks out — otherwise anyone who learned the URL
+ * could mint themselves unlimited messages.
  */
 @Tag(name = "ads", description = "Rewarded ad ilə limit artırma")
 @Slf4j
@@ -28,34 +32,37 @@ import java.util.UUID;
 public class AdsController {
 
     private final AdRewardEventRepository adRewardEventRepository;
+    private final AdMobSsvVerifier verifier;
     private final LimitService limitService;
     private final MecnunProperties props;
 
-    @Value("${mecnun.admob.ssv-public-key:}")
-    private String ssvPublicKey;
-
     @SecurityRequirements
-    @Operation(summary = "AdMob SSV callback — imza yoxlaması placeholder-dir")
+    @Operation(summary = "AdMob SSV callback — imza yoxlanılır, sonra limit artırılır")
     @GetMapping("/reward-callback")
     @Transactional
-    public ResponseEntity<Void> rewardCallback(@RequestParam("user_id") UUID userId,
+    public ResponseEntity<Void> rewardCallback(HttpServletRequest request,
+                                               @RequestParam(value = "user_id", required = false) String userIdParam,
                                                @RequestParam(value = "transaction_id", required = false) String transactionId,
-                                               @RequestParam(value = "reward_amount", required = false) Integer rewardAmount,
-                                               @RequestParam(value = "signature", required = false) String signature,
-                                               @RequestParam(value = "key_id", required = false) String keyId) {
-        // TODO(next prompt): verify `signature` with the ECDSA public key fetched from
-        // https://gstatic.com/admob/reward/verifier-keys.json (cached), keyed by `key_id`.
-        if (ssvPublicKey == null || ssvPublicKey.isBlank()) {
-            log.warn("ADMOB_SSV_PUBLIC_KEY is not configured — accepting reward callback unverified (dev only)");
+                                               @RequestParam(value = "reward_amount", required = false) Integer rewardAmount) {
+        // Verified against the RAW query string: re-encoding decoded parameters changes the bytes
+        // that were signed, and every signature would fail.
+        if (!verifier.verify(request.getQueryString())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
+        UUID userId = parseUuid(userIdParam);
+        if (userId == null) {
+            log.warn("AdMob SSV: user_id oxunmadı: {}", userIdParam);
+            return ResponseEntity.badRequest().build();
+        }
+
+        // AdMob retries callbacks, so a repeat must not pay out twice.
         if (transactionId != null && adRewardEventRepository.existsByTransactionId(transactionId)) {
-            return ResponseEntity.ok().build(); // replay — already granted
+            return ResponseEntity.ok().build();
         }
 
-        boolean granted = limitService.grantAdReward(userId);
-        if (!granted) {
-            log.info("Daily rewarded-ad cap reached for user {}", userId);
+        if (!limitService.grantAdReward(userId)) {
+            log.info("Gündəlik reklam tavanına çatılıb: user {}", userId);
             return ResponseEntity.ok().build();
         }
 
@@ -66,6 +73,18 @@ public class AdsController {
                 .rewardAmount(rewardAmount != null ? rewardAmount : props.getAds().getMessagesPerReward())
                 .build());
 
+        log.info("Reklam mükafatı verildi: user {}", userId);
         return ResponseEntity.ok().build();
+    }
+
+    private UUID parseUuid(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return UUID.fromString(value);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 }

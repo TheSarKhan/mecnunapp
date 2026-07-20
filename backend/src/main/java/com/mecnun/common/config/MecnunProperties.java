@@ -17,6 +17,10 @@ public class MecnunProperties {
     private final Ads ads = new Ads();
     private final Gemini gemini = new Gemini();
     private final Memory memory = new Memory();
+    private final Admob admob = new Admob();
+    private final Revenuecat revenuecat = new Revenuecat();
+    private final Google google = new Google();
+    private final Dev dev = new Dev();
 
     @Getter
     @Setter
@@ -95,5 +99,58 @@ public class MecnunProperties {
         private int messagesPerReward = 5;
         /** Gündə maksimum neçə dəfə reklama baxıb limit artırmaq olar (brief v2 §8: 3). */
         private int maxRewardsPerDay = 3;
+    }
+
+    @Getter
+    @Setter
+    public static class Admob {
+        /**
+         * AdMob SSV-də açarı SƏN konfiqurasiya etmirsən — Google onları dərc edir və hər çağırış
+         * hansı açarla imzalandığını `key_id` ilə bildirir. Açarlar dövri olaraq dəyişir, ona görə
+         * siyahı yüklənib cache-lənir.
+         */
+        private String verifierKeysUrl = "https://www.gstatic.com/admob/reward/verifier-keys.json";
+        /**
+         * Yalnız lokal test üçün false edilə bilər. Söndürülsə, URL-i bilən hər kəs özünə limitsiz
+         * mesaj yaza bilər — prod-da qəti true.
+         */
+        private boolean ssvVerificationEnabled = true;
+    }
+
+    @Getter
+    @Setter
+    public static class Revenuecat {
+        /**
+         * RevenueCat imza göndərmir — onların panelində qurduğun sabit Authorization başlığını
+         * geri qaytarır və sən onu tutuşdurursan. Boş olsa webhook yoxlanmadan qəbul edilir
+         * (yalnız lokal iş üçün).
+         */
+        private String webhookSecret = "";
+    }
+
+    @Getter
+    @Setter
+    public static class Google {
+        /**
+         * Web client ID — ID token-in `aud` sahəsi buna bərabər olmalıdır.
+         *
+         * Client SECRET burada YOXDUR və lazım da deyil: mobil app public client-dir, biz isə
+         * yalnız hazır ID token-in imzasını yoxlayırıq. Secret yalnız server tərəfli authorization
+         * code mübadiləsi üçün lazım olardı — bizdə o axın yoxdur.
+         */
+        private String clientId = "";
+
+        public boolean isEnabled() {
+            return clientId != null && !clientId.isBlank();
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class Dev {
+        /** Lokal iş üçün bilinən test hesabı yaradılsın. Prod-da qəti false. */
+        private boolean seedTestUser = false;
+        private String testUserIdentifier = "test@mecnun.com";
+        private String testUserPassword = "test1234";
     }
 }

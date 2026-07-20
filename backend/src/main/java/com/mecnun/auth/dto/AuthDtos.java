@@ -26,6 +26,10 @@ public final class AuthDtos {
     public record RefreshRequest(@NotBlank String refreshToken) {
     }
 
+    @Schema(description = "Google ilə giriş — mobil app-in Google Sign-In-dan aldığı ID token")
+    public record GoogleLoginRequest(@NotBlank String idToken) {
+    }
+
     @Schema(description = "Token cütü")
     public record TokenResponse(
             String accessToken,

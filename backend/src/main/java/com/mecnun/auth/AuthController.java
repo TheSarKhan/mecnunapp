@@ -29,6 +29,12 @@ public class AuthController {
         return authService.login(request);
     }
 
+    @Operation(summary = "Google ilə giriş — hesab yoxdursa yaradılır")
+    @PostMapping("/google")
+    public TokenResponse google(@Valid @RequestBody GoogleLoginRequest request) {
+        return authService.loginWithGoogle(request);
+    }
+
     @Operation(summary = "Access token-i refresh token ilə yenilə")
     @PostMapping("/refresh")
     public TokenResponse refresh(@Valid @RequestBody RefreshRequest request) {

@@ -24,8 +24,16 @@ public class User {
     @Column(name = "identifier", nullable = false, unique = true, length = 190)
     private String identifier;
 
-    @Column(name = "password_hash", nullable = false)
+    /** Null for accounts that only ever sign in with Google. */
+    @Column(name = "password_hash")
     private String passwordHash;
+
+    /** Google's subject id — stable for this user, unlike the e-mail. */
+    @Column(name = "google_sub", length = 190)
+    private String googleSub;
+
+    @Column(name = "email", length = 190)
+    private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false, length = 20)

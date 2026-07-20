@@ -39,14 +39,37 @@ public class Subscription {
     @Column(name = "current_period_end")
     private Instant currentPeriodEnd;
 
+    /** APP_STORE / PLAY_STORE — informational, useful when reconciling with the store console. */
+    @Column(name = "store", length = 30)
+    private String store;
+
+    @Column(name = "product_id", length = 190)
+    private String productId;
+
+    /** Timestamp of the last webhook event applied, used to reject out-of-order retries. */
+    @Column(name = "last_event_at")
+    private Instant lastEventAt;
+
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    /**
+     * Entitlement check.
+     *
+     * The period end is the source of truth, not the status word. Two reasons:
+     *
+     * - A CANCELLATION only means auto-renew was switched off. The user paid through the end of
+     *   the period and keeps premium until then; treating "cancelled" as "not premium" would cut
+     *   them off early, which is both wrong and a refund request.
+     * - Webhooks get lost. If EXPIRATION never arrives, an expired period must still stop granting
+     *   premium rather than leaving a free subscription open forever.
+     */
     public boolean isPremium() {
-        return plan == Plan.PREMIUM
-                && (status == SubscriptionStatus.ACTIVE
-                    || status == SubscriptionStatus.IN_TRIAL
-                    || status == SubscriptionStatus.IN_GRACE_PERIOD);
+        if (plan != Plan.PREMIUM || status == SubscriptionStatus.EXPIRED) {
+            return false;
+        }
+        // A null end means a non-expiring entitlement (lifetime / promotional grant).
+        return currentPeriodEnd == null || currentPeriodEnd.isAfter(Instant.now());
     }
 
     @PrePersist

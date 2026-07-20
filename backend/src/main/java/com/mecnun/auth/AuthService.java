@@ -30,6 +30,7 @@ public class AuthService {
     private final SubscriptionService subscriptionService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final GoogleTokenVerifier googleTokenVerifier;
 
     @Transactional
     public TokenResponse register(RegisterRequest request) {
@@ -61,10 +62,77 @@ public class AuthService {
         String identifier = request.identifier().trim().toLowerCase();
         User user = userRepository.findByIdentifier(identifier)
                 .orElseThrow(() -> ApiException.unauthorized("Nömrə/e-poçt və ya şifrə yanlışdır."));
-        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+        // Google-only accounts have no password hash; matches() would throw on null.
+        if (user.getPasswordHash() == null
+                || !passwordEncoder.matches(request.password(), user.getPasswordHash())) {
             throw ApiException.unauthorized("Nömrə/e-poçt və ya şifrə yanlışdır.");
         }
         return issue(user.getId());
+    }
+
+    /**
+     * Signs in with a Google ID token obtained by the app.
+     *
+     * Matching order is deliberate: Google's subject first (it never changes), then a verified
+     * e-mail to link an account that already signed up with a password. An unverified e-mail is
+     * never linked — that would let someone claim an address they do not control.
+     */
+    @Transactional
+    public TokenResponse loginWithGoogle(GoogleLoginRequest request) {
+        if (!googleTokenVerifier.isEnabled()) {
+            throw ApiException.badRequest("Google ilə giriş bu serverdə konfiqurasiya olunmayıb.");
+        }
+
+        GoogleTokenVerifier.GoogleIdentity identity = googleTokenVerifier.verify(request.idToken());
+        if (identity == null) {
+            throw ApiException.unauthorized("Google girişi təsdiqlənmədi.");
+        }
+
+        User user = userRepository.findByGoogleSub(identity.subject())
+                .orElseGet(() -> linkOrCreate(identity));
+
+        return issue(user.getId());
+    }
+
+    private User linkOrCreate(GoogleTokenVerifier.GoogleIdentity identity) {
+        if (identity.emailVerified() && identity.email() != null) {
+            String email = identity.email().trim().toLowerCase();
+            User existing = userRepository.findByEmail(email)
+                    .or(() -> userRepository.findByIdentifier(email))
+                    .orElse(null);
+            if (existing != null) {
+                existing.setGoogleSub(identity.subject());
+                existing.setEmail(email);
+                return userRepository.save(existing);
+            }
+        }
+        return createGoogleUser(identity);
+    }
+
+    private User createGoogleUser(GoogleTokenVerifier.GoogleIdentity identity) {
+        String email = identity.email() == null ? null : identity.email().trim().toLowerCase();
+        // identifier is NOT NULL and unique; the Google subject is the only value guaranteed to
+        // exist and stay stable, so it is the fallback when no e-mail came back.
+        String identifier = email != null ? email : "google:" + identity.subject();
+
+        User user = userRepository.save(User.builder()
+                .identifier(identifier)
+                .email(email)
+                .googleSub(identity.subject())
+                .passwordHash(null)
+                .gender(Gender.UNSPECIFIED)
+                .build());
+
+        userProfileRepository.save(UserProfile.builder()
+                .userId(user.getId())
+                .displayName(identity.name())
+                .persona(Persona.MECNUN)
+                .relationshipStatus(RelationshipStatus.UNSPECIFIED)
+                .profanityEnabled(false)
+                .build());
+
+        subscriptionService.createFreeSubscription(user.getId());
+        return user;
     }
 
     public TokenResponse refresh(RefreshRequest request) {
