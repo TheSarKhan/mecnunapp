@@ -1,0 +1,125 @@
+{
+  "common": {
+    "continue": "Davam et",
+    "back": "Geri",
+    "cancel": "Ləğv et",
+    "save": "Yadda saxla",
+    "delete": "Sil",
+    "close": "Bağla",
+    "loading": "Yüklənir...",
+    "error": "Nəsə səhv getdi. Bir azdan yenidən yoxla.",
+    "skip": "Keç"
+  },
+  "splash": {
+    "wordmark": "məcnun",
+    "tagline": "Dərdini danış. Burda qulaq asan var."
+  },
+  "login": {
+    "identifier": "E-poçt və ya nömrə",
+    "password": "Şifrə",
+    "submit": "Gir",
+    "noAccount": "Hesabım yoxdur — qeydiyyatdan keç",
+    "missingFields": "E-poçt və şifrəni yaz."
+  },
+  "register": {
+    "title": "Qeydiyyat",
+    "subtitle": "Bir dəqiqəlik işdir. Sonra bir neçə sual verəcəyik.",
+    "identifier": "E-poçt və ya nömrə",
+    "password": "Şifrə",
+    "passwordHint": "Ən azı 6 simvol.",
+    "submit": "Davam et",
+    "haveAccount": "Hesabım var",
+    "missingFields": "E-poçt və şifrəni yaz.",
+    "passwordTooShort": "Şifrə ən azı 6 simvol olmalıdır."
+  },
+  "onboarding": {
+    "ageGate": {
+      "title": "18 yaşın var?",
+      "body": "Məcnun münasibət mövzusunda böyüklər üçün nəzərdə tutulub. Davam etmək üçün 18 yaşın tamam olmalıdır.",
+      "confirm": "Bəli, 18 yaşım var",
+      "decline": "Xeyr"
+    },
+    "gender": {
+      "title": "Cinsiyyətin?",
+      "subtitle": "Bu, söhbətin tonunu tutmağa kömək edir.",
+      "male": "Kişi",
+      "female": "Qadın",
+      "unspecified": "Demək istəmirəm"
+    },
+    "persona": {
+      "title": "Kiminlə danışmaq istəyirsən?",
+      "subtitle": "İstədiyin vaxt ayarlardan dəyişə bilərsən.",
+      "leyli": {
+        "name": "Leyli",
+        "description": "Canlı, çox sual verən, empatiya ilə başlayan."
+      },
+      "mecnun": {
+        "name": "Məcnun",
+        "description": "Sakit, ağır, az danışan, çox eşidən."
+      }
+    },
+    "profile": {
+      "title": "Səni necə çağırım?",
+      "namePlaceholder": "Adın",
+      "statusTitle": "Hazırkı vəziyyətin?",
+      "status": {
+        "single": "Subayam",
+        "inRelationship": "Münasibətdəyəm",
+        "complicated": "Qəlizdir 😅",
+        "brokenUp": "Təzə ayrılmışam",
+        "married": "Evliyəm"
+      },
+      "pickStatus": "Vəziyyətini seç.",
+      "finish": "Başlayaq"
+    }
+  },
+  "chat": {
+    "mode": {
+      "chat": "Söhbət",
+      "qeybet": "Qeybət"
+    },
+    "placeholder": "Yaz...",
+    "emptyChat": "Gəl danışaq. Nooldu?",
+    "emptyQeybet": "De görüm, kimdən şikayətin var?",
+    "copied": "Kopyalandı",
+    "limitReached": "Bu günlük məcnunluq bəsdir 😌 Sabah davam",
+    "watchAd": "Reklama bax, {{count}} mesaj qazan",
+    "goPremium": "Limitsiz danış",
+    "send": "Göndər",
+    "sendHint": "Enter — göndər · Shift+Enter — yeni sətir"
+  },
+  "paywall": {
+    "title": "Limitsiz danış",
+    "subtitle": "Gündəlik limit yoxdur, söyüş modu açılır, cavablar daha uzun.",
+    "benefits": {
+      "unlimited": "Limitsiz mesaj",
+      "profanity": "Söyüş modu",
+      "memory": "Daha dərin yaddaş",
+      "noAds": "Reklamsız"
+    },
+    "monthly": "Aylıq",
+    "yearly": "İllik",
+    "yearlyNote": "2 ay pulsuz",
+    "subscribe": "Abunə ol",
+    "restore": "Alışı bərpa et",
+    "notNow": "İndi yox",
+    "webUnavailable": "Abunə hazırda yalnız mobil app-dan alınır. Alsan, burada da açılır."
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "persona": "Persona",
+    "changePersona": "Personanı dəyiş",
+    "profanity": "Söyüş modu",
+    "profanityLocked": "Premium tələb edir",
+    "memory": "Məcnun məni necə tanıyır?",
+    "memoryEmpty": "Hələ heç nə yadda saxlanmayıb. Bir az danışaq.",
+    "memoryDeleteAll": "Bütün yaddaşı sil",
+    "memoryDeleteAllConfirm": "Bot səninlə bağlı yadda saxladığı hər şeyi unudacaq. Geri qaytarmaq olmur.",
+    "premium": "Premium",
+    "premiumActive": "Aktivdir",
+    "language": "Dil",
+    "logout": "Çıxış",
+    "deleteAccount": "Hesabı sil",
+    "deleteAccountConfirm": "Hesabın, bütün söhbətlərin və yaddaşın həmişəlik silinəcək."
+  }
+}

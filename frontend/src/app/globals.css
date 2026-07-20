@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+/*
+ * Məcnun dizayn tokenləri — web tərəfi.
+ *
+ * Dəyərlər `mobile/src/theme/colors.ts`-in güzgüsüdür (o da `docs/design/mecnun-ui-kit`-in
+ * export-udur). Monoxrom, dark-first: heç yerdə hue yoxdur, yeganə "aksent" ağ/qara
+ * inversiyasıdır — qeybət modu məhz bununla fərqlənir.
+ *
+ * Rəng və ya radius dəyişəndə HƏR İKİ fayl yenilənməlidir. Web və mobil eyni brendin iki
+ * qabığıdır; tokenlərin ayrılması dizaynın səssizcə ikiyə bölünməsi deməkdir.
+ */
+@theme {
+  --color-bg: #131313;
+  --color-surface: #1d1d1f;
+  --color-bubble: #232326;
+  --color-ink: #f5f5f4;
+  --color-muted: #8e8e93;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-line-on: #f5f5f4;
+
+  --radius-pill: 28px;
+  --radius-card: 16px;
+  --radius-card-lg: 22px;
+
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+ * Mobil `type` şkalasının web qarşılığı. Ölçülər eynidir — masaüstündə baxış məsafəsi uzundur,
+ * amma app maksimum 640px sütunda saxlanılır, ona görə mətn mobildəki kimi oxunur.
+ */
+@layer components {
+  .t-wordmark {
+    @apply text-[40px] font-bold tracking-[-1.2px] text-ink;
+  }
+  .t-title {
+    @apply text-[27px] font-semibold tracking-[-0.5px] text-ink;
+  }
+  .t-headline {
+    @apply text-[19px] font-semibold text-ink;
+  }
+  .t-body {
+    @apply text-[16px] leading-[22px] text-ink;
+  }
+  .t-secondary {
+    @apply text-[13px] leading-[18px] text-muted;
+  }
+  .t-caption {
+    @apply text-[11px] font-semibold uppercase tracking-[1.4px] text-muted;
+  }
+}
+
+@layer utilities {
+  /* Chat siyahısı üçün — fona qarışan nazik scrollbar. */
+  .scrollbar-subtle {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  }
+  .scrollbar-subtle::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-subtle::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+  }
+}
+
+/* Klaviatura ilə gəzənlər üçün fokus halqası; siçanla klikdə görünmür. */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
