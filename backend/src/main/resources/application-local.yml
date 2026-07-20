@@ -1,0 +1,11 @@
+# Backend host-da işləyir, postgres/redis isə docker-compose-dan (portlar host-a açıqdır).
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/mecnun}
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG

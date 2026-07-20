@@ -1,0 +1,43 @@
+# --- secrets ---
+.env
+.env.local
+*.env
+!.env.example
+
+# --- java / maven ---
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+
+# --- node / expo ---
+node_modules/
+.expo/
+.expo-shared/
+dist/
+web-build/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+
+# --- native builds ---
+/mobile/ios/
+/mobile/android/
+*.keystore
+!debug.keystore
+
+# --- ide ---
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# --- os ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- logs ---
+logs/
+*.log

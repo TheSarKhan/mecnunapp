@@ -1,0 +1,10 @@
+# docker-compose daxilində — servis adları ilə bağlanır.
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/mecnun}
+    username: ${SPRING_DATASOURCE_USERNAME:mecnun}
+    password: ${SPRING_DATASOURCE_PASSWORD:mecnun}
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:redis}
+      port: ${SPRING_REDIS_PORT:6379}

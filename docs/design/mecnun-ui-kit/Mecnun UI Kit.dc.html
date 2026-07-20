@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0B0B0C; }
+  a { color: #F5F5F4; text-decoration: none; }
+  a:hover { color: #8E8E93; }
+  ::selection { background: #F5F5F4; color: #131313; }
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#0B0B0C;color:#F5F5F4;font-family:'Inter',-apple-system,system-ui,sans-serif;padding:56px 40px 120px;-webkit-font-smoothing:antialiased">
+<div style="max-width:1260px;margin:0 auto;display:flex;flex-direction:column;gap:64px">
+
+<!-- ============ MASTHEAD ============ -->
+<div style="display:flex;flex-direction:column;gap:24px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap">
+    <div style="display:flex;align-items:center;gap:20px">
+      <div style="width:76px;height:76px;border-radius:20px;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center">
+        <span style="font-size:46px;font-weight:600;line-height:1;color:#F5F5F4">ə</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:46px;font-weight:700;letter-spacing:-.03em;line-height:.9">məcnun</span>
+        <span style="font-size:15px;color:#8E8E93">Münasibət AI-ı · mobil UI kit</span>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;text-align:right">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#8E8E93">v1 · dark-first</span>
+      <span style="font-size:12px;color:#8E8E93">iOS + Android · React Native</span>
+    </div>
+  </div>
+  <p style="margin:0;max-width:640px;font-size:15px;line-height:1.55;color:#8E8E93;text-wrap:pretty">Monoxrom, səssiz UI — rəngi kontent gətirir. Saf qara işlədilmir (#131313 yumşaq fon). Ton dəyişikliyi rəng yox, inversiya ilə hiss olunur.</p>
+</div>
+
+<!-- ============ 01 FOUNDATIONS ============ -->
+<section style="display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#8E8E93">01 — Foundations</span>
+    <h2 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-.02em">Rəng · tipoqrafiya · marka</h2>
+  </div>
+
+  <!-- colors -->
+  <div style="border:1px solid rgba(255,255,255,.08);border-radius:22px;background:#141416;padding:28px;display:flex;flex-direction:column;gap:18px">
+    <span style="font-size:13px;font-weight:600;color:#F5F5F4">Rəng stilləri</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:14px">
+      <div style="border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden">
+        <div style="height:84px;background:#131313"></div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:600">Fon (dark)</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace">#131313</span></div>
+      </div>
+      <div style="border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden">
+        <div style="height:84px;background:#1D1D1F"></div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:600">Səth / kart</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace">#1D1D1F</span></div>
+      </div>
+      <div style="border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden">
+        <div style="height:84px;background:#232326"></div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:600">Bot bubble</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace">#232326</span></div>
+      </div>
+      <div style="border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden">
+        <div style="height:84px;background:#F5F5F4"></div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:600">Ağ / mətn</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace">#F5F5F4</span></div>
+      </div>
+      <div style="border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden">
+        <div style="height:84px;background:#8E8E93"></div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:600">İkincil mətn</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace">#8E8E93</span></div>
+      </div>
+      <div style="border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden">
+        <div style="height:84px;background:#131313;display:flex;align-items:center;justify-content:center"><div style="width:70%;height:40%;border:1px solid rgba(255,255,255,.08);border-radius:8px;background:rgba(255,255,255,.04)"></div></div>
+        <div style="padding:12px 14px;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:600">Border</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace">rgba(255,255,255,.08)</span></div>
+      </div>
+    </div>
+    <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:12px;color:#8E8E93;line-height:1.5">Rəng yoxdur — UI səssizdir. Vurğu yalnız ağ↔qara inversiya ilə. Light mode inversiya ilə pulsuz gəlir (v2).</p></sc-if>
+  </div>
+
+  <!-- type -->
+  <div style="border:1px solid rgba(255,255,255,.08);border-radius:22px;background:#141416;padding:28px;display:flex;flex-direction:column;gap:22px">
+    <span style="font-size:13px;font-weight:600;color:#F5F5F4">Tipoqrafiya — Inter</span>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.06)"><span style="font-size:40px;font-weight:700;letter-spacing:-.03em">məcnun</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace;white-space:nowrap">Wordmark · 40 / 700</span></div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.06)"><span style="font-size:28px;font-weight:600;letter-spacing:-.02em">Kiminlə danışacaqsan?</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace;white-space:nowrap">Title · 28 / 600</span></div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.06)"><span style="font-size:19px;font-weight:600">Münasibət statusun?</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace;white-space:nowrap">Headline · 19 / 600</span></div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.06)"><span style="font-size:16px;font-weight:400">Gəl danışaq. Nooldu?</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace;white-space:nowrap">Body · 16 / 400</span></div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.06)"><span style="font-size:13px;font-weight:400;color:#8E8E93">İstədiyin vaxt dəyişə bilərsən.</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace;white-space:nowrap">Secondary · 13 / 400</span></div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:20px"><span style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#8E8E93">Onboarding</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace;white-space:nowrap">Caption · 11 / 600 · +14% track</span></div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.06);padding-top:18px;display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#8E8E93">Ə glif testi</span>
+      <span style="font-size:30px;font-weight:500;letter-spacing:.06em">ə ğ ı ş ö ü ç · Ə Ğ I İ Ş Ö Ü Ç</span>
+      <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ true }}"><p style="margin:6px 0 0;font-size:12px;color:#8E8E93;line-height:1.5">Font tələbi: "ə" hərfi mükəmməl çəkilməlidir, fallback qəbuledilməzdir. Inter başlanğıc üçün təhlükəsiz seçim.</p></sc-if>
+    </div>
+  </div>
+
+  <!-- brand marks -->
+  <div style="border:1px solid rgba(255,255,255,.08);border-radius:22px;background:#141416;padding:28px;display:flex;flex-direction:column;gap:20px">
+    <span style="font-size:13px;font-weight:600;color:#F5F5F4">Wordmark və ikon namizədləri</span>
+    <div style="display:flex;flex-wrap:wrap;gap:36px;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+        <div style="width:96px;height:96px;border-radius:24px;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center"><span style="font-size:58px;font-weight:600;color:#F5F5F4;line-height:1">ə</span></div>
+        <span style="font-size:12px;color:#8E8E93">ə · dark</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+        <div style="width:96px;height:96px;border-radius:24px;background:#F5F5F4;display:flex;align-items:center;justify-content:center"><span style="font-size:58px;font-weight:600;color:#131313;line-height:1">ə</span></div>
+        <span style="font-size:12px;color:#8E8E93">ə · invert</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+        <div style="width:96px;height:96px;border-radius:24px;background:#131313;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center"><span style="font-size:58px;font-weight:700;color:#F5F5F4;line-height:1;letter-spacing:-.04em">m</span></div>
+        <span style="font-size:12px;color:#8E8E93">m · alternativ</span>
+      </div>
+      <div style="flex:1 1 260px;min-width:260px;display:flex;flex-direction:column;gap:14px;padding-left:8px">
+        <div style="display:flex;align-items:baseline;gap:16px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="font-size:34px;font-weight:700;letter-spacing:-.03em;color:#F5F5F4">məcnun</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace">AZ</span></div>
+        <div style="display:flex;align-items:baseline;gap:16px"><span style="font-size:34px;font-weight:700;letter-spacing:-.03em;color:#F5F5F4">mecnun</span><span style="font-size:12px;color:#8E8E93;font-family:ui-monospace,Menlo,monospace">TR</span></div>
+        <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ true }}"><p style="margin:4px 0 0;font-size:12px;color:#8E8E93;line-height:1.5">ə⇄e keçidi bir hərf dəyişikliyidir — eyni loqo iki bazarda. i18n gündən 1 hazırdır.</p></sc-if>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 COMPONENTS ============ -->
+<section style="display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#8E8E93">02 — Komponentlər</span>
+    <h2 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-.02em">Element inventarı</h2>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px">
+
+    <!-- buttons -->
+    <div style="border:1px solid rgba(255,255,255,.08);border-radius:20px;background:#141416;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8E8E93">Düymələr</span>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="text-align:center;background:#F5F5F4;color:#131313;padding:15px;border-radius:28px;font-size:16px;font-weight:600">Başla</div>
+        <div style="text-align:center;background:#1D1D1F;color:#F5F5F4;padding:15px;border-radius:28px;font-size:16px;font-weight:600;border:1px solid rgba(255,255,255,.08)">Davam et</div>
+        <div style="text-align:center;background:transparent;color:#8E8E93;padding:15px;border-radius:28px;font-size:16px;font-weight:500">İndi yox</div>
+      </div>
+      <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:12px;color:#8E8E93;line-height:1.5">Primary (ağ) · Secondary (səth+border) · Ghost. Radius 28, hündürlük 50.</p></sc-if>
+    </div>
+
+    <!-- mode pill -->
+    <div style="border:1px solid rgba(255,255,255,.08);border-radius:20px;background:#141416;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8E8E93">Mode pill</span>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <div style="display:inline-flex;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:3px">
+          <span style="padding:6px 16px;border-radius:18px;background:#232326;color:#F5F5F4;font-size:12px;font-weight:600">Söhbət</span>
+          <span style="padding:6px 16px;border-radius:18px;color:#8E8E93;font-size:12px;font-weight:500">Qeybət</span>
+        </div>
+        <div style="display:inline-flex;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:3px">
+          <span style="padding:6px 16px;border-radius:18px;color:#8E8E93;font-size:12px;font-weight:500">Söhbət</span>
+          <span style="padding:6px 16px;border-radius:18px;background:#F5F5F4;color:#131313;font-size:12px;font-weight:700">Qeybət</span>
+        </div>
+      </div>
+      <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:12px;color:#8E8E93;line-height:1.5">Qeybət modu = inversiya: pill ağa dönür. Monoxromda ton dəyişikliyi rəng qədər hiss olunur.</p></sc-if>
+    </div>
+
+    <!-- toggle -->
+    <div style="border:1px solid rgba(255,255,255,.08);border-radius:20px;background:#141416;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8E8E93">Toggle — söyüş modu</span>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="font-size:15px">Söyüş modu</span><span style="font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#131313;background:#F5F5F4;padding:2px 7px;border-radius:6px">premium</span></div>
+          <div style="width:46px;height:28px;border-radius:15px;background:#232326;border:1px solid rgba(255,255,255,.08);padding:3px;display:flex;align-items:center"><div style="width:20px;height:20px;border-radius:50%;background:#8E8E93"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <span style="font-size:15px">Söyüş modu</span>
+          <div style="width:46px;height:28px;border-radius:15px;background:#F5F5F4;padding:3px;display:flex;align-items:center;justify-content:flex-end"><div style="width:20px;height:20px;border-radius:50%;background:#131313"></div></div>
+        </div>
+      </div>
+      <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:12px;color:#8E8E93;line-height:1.5">Pulsuz istifadəçidə OFF + premium çip → basanda paywall. Default OFF, əlavə 18+ təsdiq.</p></sc-if>
+    </div>
+
+    <!-- counter -->
+    <div style="border:1px solid rgba(255,255,255,.08);border-radius:20px;background:#141416;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8E8E93">Limit sayğacı</span>
+      <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start">
+        <div style="display:inline-flex;align-items:center;gap:10px;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:7px 14px">
+          <span style="font-size:13px;font-weight:600">14<span style="color:#8E8E93;font-weight:500"> / 20</span></span>
+          <div style="width:52px;height:4px;border-radius:2px;background:#232326;overflow:hidden"><div style="width:70%;height:100%;background:#F5F5F4"></div></div>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:10px;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:7px 14px">
+          <span style="font-size:13px;font-weight:600">20<span style="color:#8E8E93;font-weight:500"> / 20</span></span>
+          <div style="width:52px;height:4px;border-radius:2px;background:#232326;overflow:hidden"><div style="width:100%;height:100%;background:#F5F5F4"></div></div>
+        </div>
+      </div>
+      <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:12px;color:#8E8E93;line-height:1.5">Gündəlik pulsuz mesaj sayğacı (15–20). Dolanda limit ekranı açılır.</p></sc-if>
+    </div>
+
+    <!-- chat bubbles -->
+    <div style="border:1px solid rgba(255,255,255,.08);border-radius:20px;background:#141416;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8E8E93">Chat bubble-lar</span>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="align-self:flex-end;max-width:82%;background:#F5F5F4;color:#131313;padding:10px 14px;border-radius:20px 20px 6px 20px;font-size:15px;line-height:1.35">ex yene story-me baxıb yazmadı</div>
+        <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35;margin-top:6px">Yene başladı ha.</div>
+        <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35">Sən niyə hələ də story-sinə fikir verirsən, onu deyim.</div>
+      </div>
+      <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:12px;color:#8E8E93;line-height:1.5">İstifadəçi = ağ, bot = #232326. Ardıcıl bubble-lar 6px aralı (real yazışma ritmi).</p></sc-if>
+    </div>
+
+    <!-- composer -->
+    <div style="border:1px solid rgba(255,255,255,.08);border-radius:20px;background:#141416;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8E8E93">Kompozer</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1 1 auto;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:12px 16px;color:#8E8E93;font-size:15px">Yaz...</div>
+        <div style="flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#F5F5F4;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#131313" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+      </div>
+      <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:12px;color:#8E8E93;line-height:1.5">Placeholder #8E8E93. Göndər düyməsi ağ dairə, aktivləşəndə tam ağ.</p></sc-if>
+    </div>
+
+    <!-- persona card -->
+    <div style="border:1px solid rgba(255,255,255,.08);border-radius:20px;background:#141416;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8E8E93">Persona kartı</span>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="border:1.5px solid #F5F5F4;border-radius:16px;padding:14px;background:#1D1D1F;display:flex;align-items:center;gap:12px">
+          <div style="width:38px;height:38px;border-radius:50%;background:#232326;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex:0 0 auto">L</div>
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">Leyli</span><span style="font-size:12px;color:#8E8E93;line-height:1.3">İsti, empatik — lazım olanda "otur yerində" deyər.</span></div>
+        </div>
+        <div style="border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;background:#1D1D1F;display:flex;align-items:center;gap:12px">
+          <div style="width:38px;height:38px;border-radius:50%;background:#232326;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;flex:0 0 auto">M</div>
+          <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">Məcnun</span><span style="font-size:12px;color:#8E8E93;line-height:1.3">Zarafatcıl, qaqaş enerjisi, birbaşa danışan.</span></div>
+        </div>
+      </div>
+      <sc-if value="{{ showSpecs }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:12px;color:#8E8E93;line-height:1.5">Seçili kart 1.5px ağ border. Xitab personadan yox, istifadəçi cinsiyyətindən asılıdır.</p></sc-if>
+    </div>
+
+    <!-- plan card -->
+    <div style="border:1px solid rgba(255,255,255,.08);border-radius:20px;background:#141416;padding:24px;display:flex;flex-direction:column;gap:16px">
+      <span style="font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8E8E93">Plan kartı</span>
+      <div style="border:1.5px solid #F5F5F4;border-radius:16px;padding:16px;background:#1D1D1F;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between"><span style="font-size:15px;font-weight:600">Aylıq</span><span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#131313;background:#F5F5F4;padding:2px 8px;border-radius:6px">seçili</span></div>
+        <div style="display:flex;align-items:baseline;gap:6px"><span style="font-size:28px;font-weight:700;letter-spacing:-.02em">10 AZN</span><span style="font-size:14px;color:#8E8E93">/ ay</span></div>
+        <span style="font-size:12px;color:#8E8E93;line-height:1.4">Limitsiz mesaj · dərin yaddaş · söyüş modu</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 03 ONBOARDING ============ -->
+<section style="display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#8E8E93">03 — Ekranlar · Onboarding</span>
+    <h2 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-.02em">Splash → ilk opener</h2>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:40px">
+
+    <!-- F: splash -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600;letter-spacing:-.01em">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:0 30px">
+            <div style="width:80px;height:80px;border-radius:22px;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center"><span style="font-size:48px;font-weight:600;line-height:1">ə</span></div>
+            <span style="font-size:42px;font-weight:700;letter-spacing:-.03em;line-height:1">məcnun</span>
+            <span style="font-size:15px;color:#8E8E93;text-align:center">Sevgidən dəli olanlar üçün</span>
+          </div>
+          <div style="padding:0 24px 30px;flex:0 0 auto"><div style="text-align:center;background:#F5F5F4;color:#131313;padding:15px;border-radius:28px;font-size:16px;font-weight:600">Başla</div></div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">Splash</span>
+    </div>
+
+    <!-- F: dil -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:1;display:flex;flex-direction:column;padding:24px;gap:8px">
+            <span style="font-size:26px;font-weight:600;letter-spacing:-.02em">Dil</span>
+            <span style="font-size:14px;color:#8E8E93;margin-bottom:16px">Danışıq dilini seç.</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:14px;border:1.5px solid #F5F5F4;background:#1D1D1F"><span style="font-size:16px;font-weight:500">Azərbaycanca</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5F5F4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#1D1D1F"><span style="font-size:16px;color:#8E8E93">Türkçe</span><span style="font-size:11px;color:#8E8E93;border:1px solid rgba(255,255,255,.12);padding:3px 8px;border-radius:8px">tezliklə</span></div>
+          </div>
+          <div style="padding:0 24px 30px;flex:0 0 auto"><div style="text-align:center;background:#F5F5F4;color:#131313;padding:15px;border-radius:28px;font-size:16px;font-weight:600">Davam et</div></div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">Dil</span>
+    </div>
+
+    <!-- F: 18+ -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 30px;gap:20px;text-align:center">
+            <span style="font-size:60px;font-weight:700;letter-spacing:-.03em;line-height:1">18+</span>
+            <span style="font-size:22px;font-weight:600;letter-spacing:-.01em">Sənin 18 yaşın var?</span>
+            <span style="font-size:14px;color:#8E8E93;line-height:1.5">məcnun yetkin məzmun daxil edir. Davam etmək üçün təsdiqlə.</span>
+          </div>
+          <div style="padding:0 24px 30px;flex:0 0 auto;display:flex;flex-direction:column;gap:10px"><div style="text-align:center;background:#F5F5F4;color:#131313;padding:15px;border-radius:28px;font-size:16px;font-weight:600">Bəli, 18 yaşım var</div><div style="text-align:center;color:#8E8E93;padding:12px;font-size:15px;font-weight:500">Xeyr, çıx</div></div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">18+ təsdiq</span>
+    </div>
+
+    <!-- F: cinsiyyət -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:1;display:flex;flex-direction:column;padding:24px;gap:8px">
+            <span style="font-size:26px;font-weight:600;letter-spacing:-.02em">Səni necə çağırım?</span>
+            <span style="font-size:14px;color:#8E8E93;margin-bottom:16px;line-height:1.4">Cinsiyyətinə görə xitab seçirəm — "ay qız" ya da "qaqaş".</span>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:14px;border:1.5px solid #F5F5F4;background:#1D1D1F"><span style="font-size:16px;font-weight:500">Qadın</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5F5F4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+              <div style="padding:16px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#1D1D1F"><span style="font-size:16px">Kişi</span></div>
+              <div style="padding:16px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#1D1D1F"><span style="font-size:16px">Deməyə bilərəm</span></div>
+            </div>
+          </div>
+          <div style="padding:0 24px 30px;flex:0 0 auto"><div style="text-align:center;background:#F5F5F4;color:#131313;padding:15px;border-radius:28px;font-size:16px;font-weight:600">Davam et</div></div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">Cinsiyyət (xitab)</span>
+    </div>
+
+    <!-- F: persona -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:1;display:flex;flex-direction:column;padding:24px;gap:8px">
+            <span style="font-size:26px;font-weight:600;letter-spacing:-.02em">Kiminlə danışacaqsan?</span>
+            <span style="font-size:14px;color:#8E8E93;margin-bottom:16px">İstədiyin vaxt dəyişə bilərsən.</span>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="border:1.5px solid #F5F5F4;border-radius:16px;padding:16px;background:#1D1D1F;display:flex;align-items:center;gap:13px">
+                <div style="width:44px;height:44px;border-radius:50%;background:#232326;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;flex:0 0 auto">L</div>
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:16px;font-weight:600">Leyli</span><span style="font-size:13px;color:#8E8E93;line-height:1.35">İsti, empatik — lazım olanda "otur yerində" deyər.</span></div>
+              </div>
+              <div style="border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;background:#1D1D1F;display:flex;align-items:center;gap:13px">
+                <div style="width:44px;height:44px;border-radius:50%;background:#232326;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;flex:0 0 auto">M</div>
+                <div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:16px;font-weight:600">Məcnun</span><span style="font-size:13px;color:#8E8E93;line-height:1.35">Zarafatcıl, qaqaş enerjisi, birbaşa danışan.</span></div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:0 24px 30px;flex:0 0 auto"><div style="text-align:center;background:#F5F5F4;color:#131313;padding:15px;border-radius:28px;font-size:16px;font-weight:600">Seç</div></div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">Persona seçimi</span>
+    </div>
+
+    <!-- F: ad + status -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:1;display:flex;flex-direction:column;padding:24px;gap:8px">
+            <span style="font-size:26px;font-weight:600;letter-spacing:-.02em">Adın nədi?</span>
+            <span style="font-size:14px;color:#8E8E93;margin-bottom:10px">Səni adınla çağırım.</span>
+            <div style="background:#1D1D1F;border:1.5px solid #F5F5F4;border-radius:14px;padding:15px 16px;font-size:16px;margin-bottom:22px">Aygün</div>
+            <span style="font-size:19px;font-weight:600;margin-bottom:12px">Münasibət statusun?</span>
+            <div style="display:flex;flex-wrap:wrap;gap:9px">
+              <span style="padding:10px 15px;border-radius:22px;border:1px solid rgba(255,255,255,.08);background:#1D1D1F;font-size:14px;color:#8E8E93">subay</span>
+              <span style="padding:10px 15px;border-radius:22px;border:1px solid rgba(255,255,255,.08);background:#1D1D1F;font-size:14px;color:#8E8E93">münasibətdə</span>
+              <span style="padding:10px 15px;border-radius:22px;border:1.5px solid #F5F5F4;background:#F5F5F4;color:#131313;font-size:14px;font-weight:600">yeni ayrılıb</span>
+              <span style="padding:10px 15px;border-radius:22px;border:1px solid rgba(255,255,255,.08);background:#1D1D1F;font-size:14px;color:#8E8E93">qəlizdir</span>
+            </div>
+          </div>
+          <div style="padding:0 24px 30px;flex:0 0 auto"><div style="text-align:center;background:#F5F5F4;color:#131313;padding:15px;border-radius:28px;font-size:16px;font-weight:600">Hazıram</div></div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">Ad + status</span>
+    </div>
+
+    <!-- F: ilk opener -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:0 0 auto;padding:2px 16px 12px;display:flex;flex-direction:column;gap:10px;align-items:center;border-bottom:1px solid rgba(255,255,255,.06)">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:1px"><span style="font-size:15px;font-weight:600">Leyli</span><span style="font-size:11px;color:#8E8E93">onlayn</span></div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:16px 14px;display:flex;flex-direction:column;gap:6px">
+            <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35">Xoş gördük, Aygün.</div>
+            <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35">Gəl əvvəlcədən deyim: burda ex-in tərəfini heç vaxt tutmuram.</div>
+            <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35">Danış görüm nooldu?</div>
+          </div>
+          <div style="flex:0 0 auto;padding:10px 14px 24px;display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.08)">
+            <div style="flex:1 1 auto;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:12px 16px;color:#8E8E93;font-size:15px">Yaz...</div>
+            <div style="flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#F5F5F4;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#131313" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+          </div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">İlk opener (statusa görə)</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 04 CORE SCREENS ============ -->
+<section style="display:flex;flex-direction:column;gap:28px">
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <span style="font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#8E8E93">04 — Ekranlar · Əsas</span>
+    <h2 style="margin:0;font-size:28px;font-weight:600;letter-spacing:-.02em">Chat · qeybət · limit · paywall · yaddaş</h2>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:40px">
+
+    <!-- CHAT normal -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:0 0 auto;padding:2px 14px 12px;display:flex;flex-direction:column;gap:10px;align-items:center;border-bottom:1px solid rgba(255,255,255,.06)">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+              <div style="width:30px;height:30px;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:1px"><span style="font-size:15px;font-weight:600">Leyli</span><span style="font-size:11px;color:#8E8E93">onlayn</span></div>
+              <div style="width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l3 2"/></svg></div>
+            </div>
+            <div style="display:inline-flex;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:3px"><span style="padding:6px 16px;border-radius:18px;background:#232326;color:#F5F5F4;font-size:12px;font-weight:600">Söhbət</span><span style="padding:6px 16px;border-radius:18px;color:#8E8E93;font-size:12px;font-weight:500">Qeybət</span></div>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:16px 14px;display:flex;flex-direction:column;gap:6px">
+            <div style="align-self:flex-end;max-width:82%;background:#F5F5F4;color:#131313;padding:10px 14px;border-radius:20px 20px 6px 20px;font-size:15px;line-height:1.35">salam, pis günümdü bugün</div>
+            <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35;margin-top:6px">Gəl danışaq. Nooldu?</div>
+            <div style="align-self:flex-end;max-width:82%;background:#F5F5F4;color:#131313;padding:10px 14px;border-radius:20px 20px 6px 20px;font-size:15px;line-height:1.35;margin-top:6px">ex yene story-me baxıb yazmadı</div>
+            <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35;margin-top:6px">Yene başladı ha.</div>
+            <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35">Sən niyə hələ də onun story-sinə fikir verirsən, onu deyim.</div>
+          </div>
+          <div style="flex:0 0 auto;display:flex;justify-content:center;padding-bottom:6px"><span style="font-size:11px;color:#8E8E93">14 / 20 mesaj</span></div>
+          <div style="flex:0 0 auto;padding:6px 14px 24px;display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.08)">
+            <div style="flex:1 1 auto;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:12px 16px;color:#8E8E93;font-size:15px">Yaz...</div>
+            <div style="flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#F5F5F4;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#131313" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+          </div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">Chat modu</span>
+    </div>
+
+    <!-- QEYBET mode -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:0 0 auto;padding:2px 14px 12px;display:flex;flex-direction:column;gap:8px;align-items:center;border-bottom:1px solid rgba(255,255,255,.1)">
+            <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+              <div style="width:30px;height:30px;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:1px"><span style="font-size:15px;font-weight:600">Leyli</span><span style="font-size:11px;color:#8E8E93">onlayn</span></div>
+              <div style="width:30px;height:30px;border-radius:50%;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 8v4l3 2"/></svg></div>
+            </div>
+            <div style="display:inline-flex;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:3px"><span style="padding:6px 16px;border-radius:18px;color:#8E8E93;font-size:12px;font-weight:500">Söhbət</span><span style="padding:6px 16px;border-radius:18px;background:#F5F5F4;color:#131313;font-size:12px;font-weight:700">Qeybət</span></div>
+            <span style="font-size:11px;color:#8E8E93">Burda ex-in tərəfini heç vaxt tutmuram</span>
+          </div>
+          <div style="flex:1;overflow:hidden;padding:16px 14px;display:flex;flex-direction:column;gap:6px">
+            <div style="align-self:flex-end;max-width:82%;background:#F5F5F4;color:#131313;padding:10px 14px;border-radius:20px 20px 6px 20px;font-size:15px;line-height:1.35">sonra deyir mən dəyişmişəm, günah məndədi</div>
+            <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35;margin-top:6px">Günah səndə??</div>
+            <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35">Voobşe utanmır ha.</div>
+            <div style="align-self:flex-start;max-width:82%;background:#232326;color:#F5F5F4;padding:10px 14px;border-radius:20px 20px 20px 6px;font-size:15px;line-height:1.35">Sən nə dəyişmisən — o özü yoxa çıxıb, sonra qayıdıb "sən dəyişmisən" deyir.</div>
+          </div>
+          <div style="flex:0 0 auto;padding:6px 14px 24px;display:flex;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,.08)">
+            <div style="flex:1 1 auto;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:12px 16px;color:#8E8E93;font-size:15px">Yaz...</div>
+            <div style="flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:#F5F5F4;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#131313" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></div>
+          </div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">Qeybət modu (inversiya)</span>
+    </div>
+
+    <!-- LIMIT + ad -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px;gap:18px">
+            <div style="display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center">
+              <div style="display:inline-flex;align-items:center;gap:10px;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:8px 15px"><span style="font-size:14px;font-weight:600">20<span style="color:#8E8E93;font-weight:500"> / 20</span></span><div style="width:56px;height:4px;border-radius:2px;background:#232326;overflow:hidden"><div style="width:100%;height:100%;background:#F5F5F4"></div></div></div>
+              <span style="font-size:23px;font-weight:600;letter-spacing:-.02em;line-height:1.2">Bu günlük məcnunluq bəsdir</span>
+              <span style="font-size:14px;color:#8E8E93;line-height:1.5">Sabah təzədən danışarıq. Ya da davam etmək üçün...</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:15px;background:#1D1D1F;display:flex;align-items:center;gap:13px">
+                <div style="width:38px;height:38px;border-radius:50%;background:#232326;display:flex;align-items:center;justify-content:center;flex:0 0 auto"><svg width="16" height="16" viewBox="0 0 24 24" fill="#F5F5F4"><path d="M8 5v14l11-7z"/></svg></div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">Reklama bax</span><span style="font-size:12px;color:#8E8E93">+5 mesaj · bugün 1/3 istifadə</span></div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </div>
+              <div style="border-radius:16px;padding:15px;background:#F5F5F4;color:#131313;display:flex;align-items:center;gap:13px">
+                <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:700">məcnun+ ə keç</span><span style="font-size:12px;color:#48484A">Limitsiz mesaj, dərin yaddaş, söyüş modu</span></div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#131313" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">Limit + rewarded ad</span>
+    </div>
+
+    <!-- PAYWALL -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 20px 0 20px;flex:0 0 auto;position:relative;z-index:2">
+            <div style="width:30px;height:30px;border-radius:50%;background:#1D1D1F;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+            <svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;padding:20px 24px;gap:8px">
+            <span style="font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1">məcnun+</span>
+            <span style="font-size:14px;color:#8E8E93;margin-bottom:14px;line-height:1.4">Limitsiz danış. Səni daha yaxşı tanısın.</span>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px">
+              <div style="display:flex;align-items:center;gap:11px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5F5F4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span style="font-size:15px">Limitsiz mesaj</span></div>
+              <div style="display:flex;align-items:center;gap:11px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5F5F4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span style="font-size:15px">Dərin yaddaş — səni daha çox xatırlayır</span></div>
+              <div style="display:flex;align-items:center;gap:11px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5F5F4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span style="font-size:15px">Söyüş modu</span></div>
+              <div style="display:flex;align-items:center;gap:11px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F5F5F4" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg><span style="font-size:15px">Reklamsız</span></div>
+            </div>
+            <div style="margin-top:auto;border:1.5px solid #F5F5F4;border-radius:16px;padding:16px;background:#1D1D1F;display:flex;align-items:center;justify-content:space-between">
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:15px;font-weight:600">Aylıq</span><span style="font-size:12px;color:#8E8E93">istənilən vaxt ləğv et</span></div>
+              <div style="display:flex;align-items:baseline;gap:4px"><span style="font-size:24px;font-weight:700;letter-spacing:-.02em">10 AZN</span><span style="font-size:13px;color:#8E8E93">/ay</span></div>
+            </div>
+          </div>
+          <div style="padding:0 24px 26px;flex:0 0 auto;display:flex;flex-direction:column;gap:8px"><div style="text-align:center;background:#F5F5F4;color:#131313;padding:15px;border-radius:28px;font-size:16px;font-weight:600">Abunə ol</div><div style="text-align:center;color:#8E8E93;padding:8px;font-size:14px;font-weight:500">İndi yox</div></div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">Paywall (söyüş modu konversiyası)</span>
+    </div>
+
+    <!-- MEMORY -->
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+      <div style="width:300px;height:640px;border-radius:46px;background:#000;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,.55);flex:0 0 auto">
+        <div style="width:100%;height:100%;border-radius:36px;background:#131313;overflow:hidden;position:relative;display:flex;flex-direction:column">
+          <div style="position:absolute;top:9px;left:50%;transform:translateX(-50%);width:84px;height:24px;background:#000;border-radius:14px;z-index:6"></div>
+          <div style="height:42px;display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 26px;flex:0 0 auto;position:relative;z-index:2"><span style="color:#F5F5F4;font-size:14px;font-weight:600">9:41</span><svg width="20" height="11" viewBox="0 0 22 11"><rect x="0.5" y="0.5" width="18" height="10" rx="2.5" fill="none" stroke="#F5F5F4" stroke-opacity="0.5"/><rect x="2" y="2" width="13" height="7" rx="1.2" fill="#F5F5F4"/><rect x="20" y="3.5" width="1.5" height="4" rx="0.75" fill="#F5F5F4"/></svg></div>
+          <div style="flex:0 0 auto;padding:2px 16px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.06)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg><span style="font-size:16px;font-weight:600">Yaddaş</span></div>
+          <div style="flex:1;overflow:hidden;padding:20px 20px;display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:20px;font-weight:600;letter-spacing:-.01em;line-height:1.25">Məcnun məni necə tanıyır?</span>
+            <span style="font-size:13px;color:#8E8E93;line-height:1.45;margin-bottom:16px">Bunlar yadımda saxladıqlarım. İstədiyini sil.</span>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:10px;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:13px 14px"><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;color:#8E8E93;letter-spacing:.04em;text-transform:uppercase">Ex adı</span><span style="font-size:15px">Kənan</span></div><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+              <div style="display:flex;align-items:center;gap:10px;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:13px 14px"><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;color:#8E8E93;letter-spacing:.04em;text-transform:uppercase">Münasibət statusu</span><span style="font-size:15px">yeni ayrılıb</span></div><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+              <div style="display:flex;align-items:center;gap:10px;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:13px 14px"><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;color:#8E8E93;letter-spacing:.04em;text-transform:uppercase">Açar hadisə</span><span style="font-size:15px">story-yə baxıb yazmır</span></div><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+              <div style="display:flex;align-items:center;gap:10px;background:#1D1D1F;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:13px 14px"><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;color:#8E8E93;letter-spacing:.04em;text-transform:uppercase">Təkrar mövzu</span><span style="font-size:15px">barışıq-küsülü dövrü</span></div><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8E8E93" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+            </div>
+          </div>
+          <div style="padding:0 20px 26px;flex:0 0 auto"><div style="text-align:center;background:transparent;color:#F5F5F4;padding:14px;border-radius:28px;font-size:15px;font-weight:600;border:1px solid rgba(255,255,255,.16)">Hər şeyi sil</div></div>
+        </div>
+      </div>
+      <span style="font-size:13px;color:#8E8E93">"Məcnun məni necə tanıyır?"</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- footer -->
+<div style="border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+  <span style="font-size:13px;color:#8E8E93">məcnun UI kit · monoxrom · dark-first · Inter</span>
+  <span style="font-size:13px;color:#8E8E93">Brief Rev 2.1 · 20 iyul 2026</span>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1340,&quot;height&quot;:900},&quot;showSpecs&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Kit&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      showSpecs: this.props.showSpecs ?? true,
+    };
+  }
+}
+</script>
+</body>
+</html>
