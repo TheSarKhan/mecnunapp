@@ -35,10 +35,50 @@ Backend işləmirsə app açılır, amma giriş/qeydiyyat xəta verir.
 
 Yalnız `EXPO_PUBLIC_` prefiksli dəyişənlər bundle-a düşür. `.env` dəyişəndən sonra Expo-nu restart et.
 
-## APK / build (EAS)
+## APK — lokal build
 
-Build konfiqurasiyası `eas.json`-dadır. **`EXPO_PUBLIC_*` dəyərləri orada yazılıb, `.env`-də
-yox** — `.env` repoda deyil və hər maşında fərqlidir, build isə təkrarlana bilən olmalıdır.
+Bulud (EAS) olmadan, öz maşınında. Tələb olunanlar artıq quraşdırılıb:
+
+| Nə | Harada |
+| --- | --- |
+| JDK 21 | `C:\Program Files\Eclipse Adoptium\jdk-21.0.11.10-hotspot` |
+| Android SDK | `C:\Users\serxa\Android\Sdk` (platform 36, build-tools 36) |
+
+```powershell
+$env:JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-21.0.11.10-hotspot"
+$env:ANDROID_HOME="C:\Users\serxa\Android\Sdk"
+
+cd mobile
+npx expo prebuild --platform android --clean     # native layihəni generasiya edir
+
+cd android
+.\gradlew.bat assembleRelease --no-daemon `
+  "-Pandroid.injected.signing.store.file=<mütləq yol>\credentials\mecnun-release.keystore" `
+  "-Pandroid.injected.signing.store.password=<credentials\keystore.env-dən>" `
+  "-Pandroid.injected.signing.key.alias=mecnun" `
+  "-Pandroid.injected.signing.key.password=<eyni parol>"
+```
+
+APK: `mobile/android/app/build/outputs/apk/release/app-release.apk`
+
+**İmzalama parametrləri niyə komanda sətrindədir:** Expo şablonu release-i *debug açarı* ilə
+imzalayır (`app/build.gradle` özü xəbərdarlıq edir). `android/` qovluğu isə hər `prebuild
+--clean`-də sıfırdan yaradılır — fayla yazılan konfiqurasiya itərdi. Komanda sətrindən verilən
+`android.injected.signing.*` isə generasiyadan asılı deyil.
+
+### Keystore-u itirmə
+
+`mobile/credentials/` — açar və parol oradadır, **git-ə düşmür** (`*.keystore` və `*.env`
+ignore-dadır). Play Store-a bir dəfə yüklədikdən sonra **eyni açar olmadan yeniləmə göndərmək
+mümkün deyil** — app-i sıfırdan, yeni paket adı ilə dərc etməkdən başqa yol qalmır. Ayrıca
+yerdə ehtiyat nüsxəsini saxla.
+
+`android/` qovluğu `.gitignore`-dadır: generasiya olunan koddur, mənbə deyil.
+
+## APK — bulud (EAS), alternativ
+
+Konfiqurasiya `eas.json`-dadır. **`EXPO_PUBLIC_*` orada yazılıb, `.env`-də yox** — `.env` repoda
+deyil və hər maşında fərqlidir, build isə təkrarlana bilən olmalıdır.
 
 ```bash
 npx eas-cli build --platform android --profile preview     # paylaşıla bilən APK
