@@ -41,6 +41,7 @@ java -jar target/mecnun-backend-0.1.0.jar
 - Swagger UI — http://localhost:8080/swagger-ui.html
 - OpenAPI JSON — http://localhost:8080/v3/api-docs
 - Health — http://localhost:8080/actuator/health
+- Adminer — http://localhost:8082 (8081 Metro üçün boş saxlanılıb)
 
 ## Paket strukturu
 

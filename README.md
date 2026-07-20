@@ -34,7 +34,9 @@ docker compose up --build
 | **Swagger UI** | http://localhost:8080/swagger-ui.html |
 | OpenAPI JSON | http://localhost:8080/v3/api-docs |
 | Health check | http://localhost:8080/actuator/health |
-| Adminer (DB) | http://localhost:8081 — server `postgres`, user/pass/db hamısı `mecnun` |
+| Adminer (DB) | http://localhost:8082 — server `postgres`, user/pass/db hamısı `mecnun` |
+
+> Port `8081` bilərəkdən boş saxlanılıb — `expo start` onu default olaraq istifadə edir.
 
 Dayandırmaq: `docker compose down`. Bazanı da silmək: `docker compose down -v`.
 
