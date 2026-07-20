@@ -3,25 +3,27 @@ import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-nati
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
-import { Button, GoogleSignInButton, Screen, VideoBackdrop } from '../components';
+import { Button, Screen, VideoBackdrop } from '../components';
 import { colors, fontFamily, radii, spacing, type } from '../theme';
 import { useAuthStore } from '../store';
 import { errorMessage } from '../api';
 import { useKeyboardOffset } from '../lib/useKeyboardOffset';
-import { isGoogleSignInAvailable } from '../lib/googleConfig';
 import { t } from '../i18n';
 
-/** Constant for the lifetime of the process, so it is safe to branch rendering on. */
-const GOOGLE_AVAILABLE = isGoogleSignInAvailable();
+const MIN_PASSWORD_LENGTH = 6;
 
-/** First screen in the app. Nothing happens without an account. */
-export default function LoginScreen() {
+/**
+ * Account creation only — no profile questions here.
+ *
+ * Name, gender, persona and relationship status are asked in onboarding, right after this, so the
+ * sign-up form stays two fields. Every extra field on a registration screen costs sign-ups, and
+ * these answers are better asked in the persona's own voice anyway.
+ */
+export default function RegisterScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const keyboardHeight = useKeyboardOffset();
-
-  const login = useAuthStore((s) => s.login);
-  const loginWithGoogle = useAuthStore((s) => s.loginWithGoogle);
+  const register = useAuthStore((s) => s.register);
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -29,35 +31,28 @@ export default function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = useCallback(async () => {
-    if (!identifier.trim() || !password) {
-      setError(t('login.missingFields'));
+    const trimmed = identifier.trim();
+    if (!trimmed || !password) {
+      setError(t('register.missingFields'));
       return;
     }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setError(t('register.passwordTooShort'));
+      return;
+    }
+
     setBusy(true);
     setError(null);
     try {
-      await login(identifier.trim(), password);
+      // Succeeding flips `authenticated` while `onboarded` stays false, which is what moves the
+      // navigator on to the 18+ question — no imperative navigation needed.
+      await register(trimmed, password);
     } catch (err) {
       setError(errorMessage(err));
     } finally {
       setBusy(false);
     }
-  }, [identifier, password, login]);
-
-  const onGoogleToken = useCallback(
-    async (idToken: string) => {
-      setBusy(true);
-      setError(null);
-      try {
-        await loginWithGoogle(idToken);
-      } catch (err) {
-        setError(errorMessage(err));
-      } finally {
-        setBusy(false);
-      }
-    },
-    [loginWithGoogle],
-  );
+  }, [identifier, password, register]);
 
   return (
     <View style={styles.root}>
@@ -65,8 +60,8 @@ export default function LoginScreen() {
 
       <Screen edges={['top']} transparent>
         <View style={styles.brand}>
-          <Text style={type.wordmark}>{t('splash.wordmark')}</Text>
-          <Text style={styles.tagline}>{t('splash.tagline')}</Text>
+          <Text style={type.title}>{t('register.title')}</Text>
+          <Text style={styles.copy}>{t('register.subtitle')}</Text>
         </View>
 
         <View style={styles.form}>
@@ -74,7 +69,7 @@ export default function LoginScreen() {
             style={styles.input}
             value={identifier}
             onChangeText={setIdentifier}
-            placeholder={t('login.identifier')}
+            placeholder={t('register.identifier')}
             placeholderTextColor={colors.muted}
             autoCapitalize="none"
             autoCorrect={false}
@@ -86,13 +81,14 @@ export default function LoginScreen() {
             style={styles.input}
             value={password}
             onChangeText={setPassword}
-            placeholder={t('login.password')}
+            placeholder={t('register.password')}
             placeholderTextColor={colors.muted}
             secureTextEntry
-            textContentType="password"
+            textContentType="newPassword"
             returnKeyType="go"
             onSubmitEditing={onSubmit}
           />
+          <Text style={styles.hint}>{t('register.passwordHint')}</Text>
           {error ? <Text style={styles.error}>{error}</Text> : null}
         </View>
 
@@ -109,17 +105,8 @@ export default function LoginScreen() {
             <ActivityIndicator color={colors.ink} />
           ) : (
             <>
-              <Button label={t('login.submit')} onPress={onSubmit} />
-              {/* Mounted only when it can actually work: the Google hook throws during render on a
-                  platform with no client id, so this has to be a mount decision, not a branch. */}
-              {GOOGLE_AVAILABLE ? (
-                <GoogleSignInButton onIdToken={onGoogleToken} onError={setError} />
-              ) : null}
-              <Button
-                label={t('login.noAccount')}
-                variant="ghost"
-                onPress={() => navigation.navigate('Register')}
-              />
+              <Button label={t('register.submit')} onPress={onSubmit} />
+              <Button label={t('register.haveAccount')} variant="ghost" onPress={() => navigation.goBack()} />
             </>
           )}
         </View>
@@ -131,7 +118,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg },
   brand: { flex: 1, justifyContent: 'flex-end', paddingBottom: spacing.xxxl, gap: spacing.sm },
-  tagline: { ...type.secondary, fontSize: 15, lineHeight: 21 },
+  copy: { ...type.secondary, fontSize: 15, lineHeight: 21 },
   form: { gap: spacing.md, paddingBottom: spacing.xl },
   input: {
     backgroundColor: colors.surface,
@@ -144,6 +131,7 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.regular,
     color: colors.ink,
   },
+  hint: { ...type.secondary, fontSize: 12 },
   error: { ...type.secondary, color: colors.ink },
   actions: { gap: spacing.sm },
 });

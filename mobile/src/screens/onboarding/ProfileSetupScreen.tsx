@@ -8,26 +8,30 @@ import { colors, fontFamily, radii, spacing, type } from '../../theme';
 import { useAuthStore, useOnboardingStore } from '../../store';
 import { errorMessage, userApi } from '../../api';
 import type { RelationshipStatus } from '../../api';
-import { getOrCreateDeviceCredentials } from '../../lib/deviceAccount';
 import { useKeyboardOffset } from '../../lib/useKeyboardOffset';
 import { t } from '../../i18n';
 
+/**
+ * No "prefer not to say" option, unlike the other onboarding steps.
+ *
+ * The status is what the persona opens the conversation with and what marks the account as
+ * onboarded, so an unset value would both flatten the first message and send the user back
+ * through this flow on every launch. Brief v2 §5.1 lists exactly these; MARRIED is kept because
+ * real users are.
+ */
 const STATUSES: { value: RelationshipStatus; labelKey: string }[] = [
   { value: 'SINGLE', labelKey: 'onboarding.profile.status.single' },
   { value: 'IN_RELATIONSHIP', labelKey: 'onboarding.profile.status.inRelationship' },
   { value: 'COMPLICATED', labelKey: 'onboarding.profile.status.complicated' },
   { value: 'BROKEN_UP', labelKey: 'onboarding.profile.status.brokenUp' },
   { value: 'MARRIED', labelKey: 'onboarding.profile.status.married' },
-  { value: 'UNSPECIFIED', labelKey: 'onboarding.profile.status.unspecified' },
 ];
 
 /** Last onboarding step — this is where every answer collected so far is flushed to the backend. */
 export default function ProfileSetupScreen() {
   const { displayName, gender, persona, relationshipStatus, setDisplayName, setRelationshipStatus } =
     useOnboardingStore();
-  const register = useAuthStore((s) => s.register);
   const setMe = useAuthStore((s) => s.setMe);
-  const markOnboarded = useAuthStore((s) => s.markOnboarded);
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,19 +39,26 @@ export default function ProfileSetupScreen() {
   const insets = useSafeAreaInsets();
 
   const finish = async () => {
+    if (relationshipStatus === 'UNSPECIFIED') {
+      // The status is what marks the account as onboarded, so leaving it unset here would drop
+      // the user straight back into this flow on the next launch.
+      setError(t('onboarding.profile.pickStatus'));
+      return;
+    }
+
     setBusy(true);
     setError(null);
     try {
-      const { identifier, password } = await getOrCreateDeviceCredentials();
-      await register(identifier, password);
-      const me = await userApi.updateProfile({
-        displayName: displayName.trim() || undefined,
-        gender,
-        persona,
-        relationshipStatus,
-      });
-      setMe(me);
-      await markOnboarded();
+      // The account already exists — registration happened before onboarding. This only saves the
+      // answers, and setMe flips `onboarded`, which is what moves the navigator to the chat.
+      setMe(
+        await userApi.updateProfile({
+          displayName: displayName.trim() || undefined,
+          gender,
+          persona,
+          relationshipStatus,
+        }),
+      );
     } catch (err) {
       setError(errorMessage(err));
     } finally {

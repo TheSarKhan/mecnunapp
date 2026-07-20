@@ -1,8 +1,6 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { getOrCreateDeviceCredentials } from '../lib/deviceAccount';
-
 const ACCESS_TOKEN_KEY = 'mecnun.accessToken';
 const REFRESH_TOKEN_KEY = 'mecnun.refreshToken';
 
@@ -61,14 +59,12 @@ api.interceptors.request.use((config) => {
 });
 
 /**
- * Recovers an expired session without involving the user.
+ * Renews an expired access token using the stored refresh token.
  *
- * Two steps, in order: the stored refresh token, then the device credentials that created the
- * account in the first place. The second step matters because this is an anonymous device
- * account — there is no login screen to fall back to, so if both fail the only honest outcome is
- * to send the user back through onboarding.
+ * If that fails there is nothing else to try: accounts are real now, so the honest outcome is to
+ * drop the session and let the user sign in again.
  *
- * Single-flight: several requests failing at once must trigger one recovery, not one each.
+ * Single-flight: several requests failing at once must trigger one renewal, not one each.
  */
 let recovery: Promise<boolean> | null = null;
 
@@ -88,20 +84,13 @@ async function attemptRecovery(): Promise<boolean> {
       await saveTokens(data.accessToken, data.refreshToken);
       return true;
     } catch {
-      // Refresh token expired or was rejected; fall through to the device credentials.
+      // Refresh token expired or was rejected — the session is genuinely over.
     }
   }
 
-  try {
-    const { identifier, password } = await getOrCreateDeviceCredentials();
-    const { data } = await authApi.post('/auth/login', { identifier, password });
-    await saveTokens(data.accessToken, data.refreshToken);
-    return true;
-  } catch {
-    await clearTokens();
-    onAuthLost?.();
-    return false;
-  }
+  await clearTokens();
+  onAuthLost?.();
+  return false;
 }
 
 /**

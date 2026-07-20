@@ -11,14 +11,24 @@
     "skip": "Keç"
   },
   "login": {
-    "title": "Hesabına gir",
-    "subtitle": "Hesabın varsa buradan gir. Yoxdursa geri qayıt və başla.",
     "identifier": "E-poçt və ya nömrə",
     "password": "Şifrə",
     "submit": "Gir",
     "google": "Google ilə davam et",
-    "haveAccount": "Hesabım var",
+    "googleFailed": "Google girişi alınmadı. Bir də yoxla.",
+    "noAccount": "Hesabım yoxdur — qeydiyyatdan keç",
     "missingFields": "E-poçt və şifrəni yaz."
+  },
+  "register": {
+    "title": "Qeydiyyat",
+    "subtitle": "Bir dəqiqəlik işdir. Sonra bir neçə sual verəcəyik.",
+    "identifier": "E-poçt və ya nömrə",
+    "password": "Şifrə",
+    "passwordHint": "Ən azı 6 simvol.",
+    "submit": "Davam et",
+    "haveAccount": "Hesabım var",
+    "missingFields": "E-poçt və şifrəni yaz.",
+    "passwordTooShort": "Şifrə ən azı 6 simvol olmalıdır."
   },
   "splash": {
     "wordmark": "məcnun",
@@ -59,9 +69,9 @@
         "inRelationship": "Münasibətdəyəm",
         "complicated": "Qəlizdir 😅",
         "brokenUp": "Təzə ayrılmışam",
-        "married": "Evliyəm",
-        "unspecified": "Demək istəmirəm"
+        "married": "Evliyəm"
       },
+      "pickStatus": "Vəziyyətini seç.",
       "finish": "Başlayaq"
     }
   },

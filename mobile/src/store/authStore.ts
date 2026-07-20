@@ -1,19 +1,12 @@
 import { create } from 'zustand';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authApi, clearTokens, loadTokens, saveTokens, setOnAuthLost, userApi } from '../api';
 import type { Me } from '../api';
-import { getOrCreateDeviceCredentials } from '../lib/deviceAccount';
-
-const ONBOARDED_KEY = 'mecnun.onboarded';
-
-function isConflict(error: unknown): boolean {
-  return (error as { response?: { status?: number } })?.response?.status === 409;
-}
 
 interface AuthState {
-  /** null while we are still restoring the session from storage. */
+  /** False while the stored session is still being restored. */
   ready: boolean;
   authenticated: boolean;
+  /** Whether the profile questions (18+, gender, persona, name, status) have been answered. */
   onboarded: boolean;
   me: Me | null;
 
@@ -24,7 +17,18 @@ interface AuthState {
   logout: () => Promise<void>;
   refreshMe: () => Promise<void>;
   setMe: (me: Me) => void;
-  markOnboarded: () => Promise<void>;
+  markOnboarded: () => void;
+}
+
+/**
+ * Onboarding state is derived from the account, not stored on the device.
+ *
+ * A relationship status is the one answer onboarding cannot finish without, so its presence is
+ * the signal. Keeping this server-side means signing in on a second device does not ask the same
+ * questions again, and a reinstall does not lose the answers.
+ */
+function isOnboarded(me: Me): boolean {
+  return me.relationshipStatus !== 'UNSPECIFIED';
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -34,88 +38,60 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   me: null,
 
   bootstrap: async () => {
-    // The api layer calls this when a session cannot be recovered at all.
-    setOnAuthLost(() => set({ authenticated: false, me: null }));
+    // The api layer calls this when a session cannot be renewed.
+    setOnAuthLost(() => set({ authenticated: false, onboarded: false, me: null }));
 
-    const { accessToken } = await loadTokens();
-    const onboarded = (await AsyncStorage.getItem(ONBOARDED_KEY)) === 'true';
-
-    if (!accessToken && !onboarded) {
-      set({ ready: true, authenticated: false, onboarded: false });
+    const { accessToken, refreshToken } = await loadTokens();
+    if (!accessToken && !refreshToken) {
+      set({ ready: true, authenticated: false, onboarded: false, me: null });
       return;
     }
 
-    // An onboarded user whose access token expired must not be stranded: the account is anonymous
-    // and tied to this device, so log back in with the stored credentials rather than making them
-    // redo onboarding. Access tokens last an hour, so this is the normal path on every relaunch.
     try {
-      if (!accessToken) {
-        const { identifier, password } = await getOrCreateDeviceCredentials();
-        const tokens = await authApi.login(identifier, password);
-        await saveTokens(tokens.accessToken, tokens.refreshToken);
-      }
+      // An expired access token is renewed by the response interceptor, so this succeeds as long
+      // as the refresh token is still good — which is the normal case on every relaunch.
       const me = await userApi.getMe();
-      set({ ready: true, authenticated: true, onboarded, me });
+      set({ ready: true, authenticated: true, onboarded: isOnboarded(me), me });
     } catch {
       await clearTokens();
-      set({ ready: true, authenticated: false, onboarded, me: null });
+      set({ ready: true, authenticated: false, onboarded: false, me: null });
     }
   },
 
   register: async (identifier, password) => {
-    // The device credentials outlive a half-finished onboarding, so a retry hits an account that
-    // already exists. Logging in is the correct recovery — refusing would lock the user out of
-    // their own device account with no login screen to reach it from.
-    let tokens;
-    try {
-      tokens = await authApi.register(identifier, password);
-    } catch (error) {
-      if (isConflict(error)) {
-        tokens = await authApi.login(identifier, password);
-      } else {
-        throw error;
-      }
-    }
+    const tokens = await authApi.register(identifier, password);
     await saveTokens(tokens.accessToken, tokens.refreshToken);
     const me = await userApi.getMe();
-    set({ authenticated: true, me });
+    // A fresh account has answered nothing yet, so onboarding runs next.
+    set({ authenticated: true, onboarded: isOnboarded(me), me });
   },
 
   login: async (identifier, password) => {
     const tokens = await authApi.login(identifier, password);
     await saveTokens(tokens.accessToken, tokens.refreshToken);
-    await AsyncStorage.setItem(ONBOARDED_KEY, 'true');
     const me = await userApi.getMe();
-    set({ authenticated: true, onboarded: true, me });
+    set({ authenticated: true, onboarded: isOnboarded(me), me });
   },
 
   loginWithGoogle: async (idToken) => {
     const tokens = await authApi.loginWithGoogle(idToken);
     await saveTokens(tokens.accessToken, tokens.refreshToken);
-    // A Google account created just now has no profile answers yet, so onboarding still runs;
-    // an existing one already has them and goes straight through.
     const me = await userApi.getMe();
-    const complete = me.relationshipStatus !== 'UNSPECIFIED';
-    if (complete) {
-      await AsyncStorage.setItem(ONBOARDED_KEY, 'true');
-    }
-    set({ authenticated: true, onboarded: complete, me });
+    set({ authenticated: true, onboarded: isOnboarded(me), me });
   },
 
   logout: async () => {
     await clearTokens();
-    set({ authenticated: false, me: null });
+    set({ authenticated: false, onboarded: false, me: null });
   },
 
   refreshMe: async () => {
     if (!get().authenticated) return;
-    set({ me: await userApi.getMe() });
+    const me = await userApi.getMe();
+    set({ me, onboarded: isOnboarded(me) });
   },
 
-  setMe: (me) => set({ me }),
+  setMe: (me) => set({ me, onboarded: isOnboarded(me) }),
 
-  markOnboarded: async () => {
-    await AsyncStorage.setItem(ONBOARDED_KEY, 'true');
-    set({ onboarded: true });
-  },
+  markOnboarded: () => set({ onboarded: true }),
 }));

@@ -30,12 +30,6 @@ export default function AgeGateScreen() {
       <View style={styles.actions}>
         <Button label={t('onboarding.ageGate.confirm')} onPress={confirm} />
         <Button label={t('onboarding.ageGate.decline')} variant="ghost" onPress={decline} />
-        {/* Entry point for people who already have an account — a new device, or Google. */}
-        <Button
-          label={t('login.haveAccount')}
-          variant="ghost"
-          onPress={() => navigation.navigate('Login')}
-        />
       </View>
     </Screen>
   );
