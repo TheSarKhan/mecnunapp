@@ -9,7 +9,7 @@ Azərbaycan dilində münasibət mövzusunda dərdləşmək üçün AI yoldaş. 
 ```
 mecnun/
 ├── backend/            # Spring Boot 3.3 · Java 21 · Maven
-├── mobile/             # React Native (Expo SDK 57) · TypeScript
+├── mobile/             # React Native (Expo SDK 54) · TypeScript
 ├── ai/                 # persona promptları, RAG korpus, yaddaş şablonları
 ├── docs/               # brief, arxitektura, dizayn tokenləri + UI kit
 └── docker-compose.yml  # postgres(pgvector) + redis + backend + adminer

@@ -1,6 +1,8 @@
 # Məcnun — mobile
 
-React Native · **Expo SDK 57** · TypeScript · React Navigation (native-stack) · Zustand · axios
+React Native · **Expo SDK 54** · TypeScript · React Navigation (native-stack) · Zustand · axios
+
+> **Niyə SDK 54, ən sonuncu yox?** Ən son SDK Expo Go-nun ən son versiyasını tələb edir, onu da köhnə iPhone/Android-lər quraşdıra bilmir — mağaza onlara OS-ə uyğun sonuncu (köhnə) build-i verir və app "incompatible with this version of Expo Go" deyir. SDK 54 daha geniş cihaz dəstəyi verir. Development build-ə keçəndə bu məhdudiyyət aradan qalxır və SDK-nı qaldırmaq olar.
 
 ## İşə salmaq
 
