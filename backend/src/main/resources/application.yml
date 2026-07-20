@@ -62,8 +62,9 @@ mecnun:
     premium-daily-messages: 500
     timezone: Asia/Baku
   ads:
+    # Brief v2 §8: +5–10 mesaj / baxış, gündə maksimum 3 baxış.
     messages-per-reward: 5
-    max-rewards-per-day: 5
+    max-rewards-per-day: 3
   gemini:
     # Not wired up yet — real LLM integration lands in a later iteration.
     api-key: ${GEMINI_API_KEY:}

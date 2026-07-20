@@ -32,7 +32,7 @@ public class MecnunProperties {
     public static class Ads {
         /** Bir rewarded ad neçə əlavə mesaj verir. */
         private int messagesPerReward = 5;
-        /** Gündə maksimum neçə dəfə reklama baxıb limit artırmaq olar. */
-        private int maxRewardsPerDay = 5;
+        /** Gündə maksimum neçə dəfə reklama baxıb limit artırmaq olar (brief v2 §8: 3). */
+        private int maxRewardsPerDay = 3;
     }
 }

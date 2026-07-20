@@ -1,75 +1,119 @@
-# Məcnun — məhsul brifi
+# Brief — kod üçün çıxarış
 
-> Bu fayl bootstrap prompt-undakı təsvirdən yığılıb. Məhsul qərarları dəyişəndə burada yenilə — kod və README-lər buna istinad edir.
+> **Əsas sənəd:** [mecnun_brief_v2.docx](mecnun_brief_v2.docx) (Rev 2.1, 20 iyul 2026). Ziddiyyət olsa **o qalib gəlir**, bu fayl yox.
+>
+> Bu fayl brief-in yalnız **koda birbaşa toxunan** hissələrinin çıxarışıdır ki, işləyəndə docx açmaq lazım gəlməsin. İcra planı: [roadmap.md](roadmap.md).
 
-## Nədir
+## Positioning
 
-Azərbaycan dilində münasibət mövzusunda dərdləşmək üçün mobil AI yoldaş.
+**İstifadəçi məcnundur** — app məcnunların gəlib danışdığı yerdir. "Ex səni məcnun edib? Gəl danışaq."
 
-## Persona
+Fərqləndirici üç şey: canlı danışıq azərbaycancası · tərəf tutan persona · istifadəçini yadda saxlayan yaddaş.
 
-İstifadəçi onboarding-də birini seçir, ayarlardan istənilən vaxt dəyişir:
+İlkin bazar AZ (18–30, şəhər, unisex). Faza 2 TR — launch-dan ~3 ay sonra.
 
-- **Leyli** — qadın persona; canlı, çox sual verən, empatiya ilə başlayan.
-- **Məcnun** — kişi persona; sakit, ağır, az danışan, çox eşidən.
+## Personalar (kilidli)
 
-Sistem promptları: [`/ai/personas`](../ai/personas).
+| Persona | Xarakter |
+| --- | --- |
+| **Leyli** | isti, empatik, amma sözünü birbaşa deyən — lazım olanda "otur yerində" deyir |
+| **Məcnun** | zarafatcıl, "qaqaş" enerjisi, birbaşa danışan |
+
+Brend adı ilə kişi personanın adı qəsdən üst-üstə düşür — əfsanənin özü onboarding-dir.
+
+**Xitab personadan yox, istifadəçinin cinsiyyətindən asılıdır:**
+
+| İstifadəçi | Xitablar |
+| --- | --- |
+| Qadın | ay qız, canım, bacım |
+| Kişi | brat, qaqaş, qardaş |
+
+## Brend səsi
+
+- Öz dramına gülür, istifadəçini **heç vaxt** ələ salmır
+- Qısa yazır — dost yazışması ritmi, mühazirə yox; bəzən 2–3 ardıcıl qısa bubble
+- Tərəf tutur, amma zərərli hərəkətə itələmir
+- **Pafos və klişe qadağandır** — "hər şey yaxşı olacaq" tipli cümlələr yoxdur
+- Bakı slengi, rusizmlərə icazə ("prosta", "davay", "voobşe"); emoji təbii dozada
+
+Ton kalibri: limit ekranı — *"Bu günlük məcnunluq bəsdir 😌 Sabah davam"* · qeybət girişi — *"Burda ex-in tərəfini heç vaxt tutmuram. Danış."*
+
+## Qırmızı xətlər (bütün modlarda, söyüş modundan asılı deyil)
+
+- Real şəxsə qarşı hərəkət planı **yoxdur**: izləmə, intiqam, hesab sındırma, ünvan tapma. Yalnız emosional müstəvi.
+- Kriz siqnallarında persona yumşalır, safety yoluna keçir.
+- Tərəf tutmaq ≠ hər şeyi təsdiqləmək.
 
 ## Modlar
 
-| Mod | Nə edir |
+| Mod | Davranış |
 | --- | --- |
-| **Söhbət** (`CHAT`) | Ümumi münasibət söhbəti. Balanslı — hər iki tərəfi görür. |
-| **Qeybət** (`QEYBET`) | Ex-venting. Persona açıq şəkildə istifadəçinin tərəfini tutur (amma yalan danışmır və zərərli davranışa təhrik etmir). |
+| **Chat** | ümumi münasibət söhbəti — dinləmə, dəyərləndirmə, məsləhət |
+| **Qeybət** | ex-venting — persona aktiv tərəf tutur, qeybətə qoşulur; UI-da inversiya |
+| **Söyüş** | **premium**. Pulsuz istifadəçiyə toggle görünür, basanda paywall — əsas konversiya nöqtəsi. Aktivləşdirmədə **əlavə 18+ təsdiq**, default OFF. Yüngül-orta küfr, heç vaxt istifadəçinin özünə qarşı. |
 
-UI-da fərq mod pill-i ilə verilir: qeybət modunda pill ağa dönür — monoxrom sistemdə yeganə vizual "state" siqnalı.
+## Onboarding
 
-## Monetizasiya (freemium)
+Splash → dil (v1 AZ) → 18+ → cinsiyyət → persona (2 kart) → ad + münasibət statusu → **personanın öz opener mesajı** (statusa uyğun).
 
-- **Pulsuz:** gündəlik mesaj limiti (hazırda 20).
-- **Rewarded ad (AdMob):** bir reklam = +5 mesaj, gündə maksimum 5 dəfə.
-- **Premium (RevenueCat):** praktiki olaraq limitsiz + söyüş modu + daha dərin yaddaş + reklamsız.
+Statuslar: subay · münasibətdə · yeni ayrılıb · qəlizdir 😅
 
-Rəqəmlər `backend/src/main/resources/application.yml` → `mecnun.limits` / `mecnun.ads`.
+Opener nümunəsi (yeni ayrılıb): *"Gəl əvvəlcədən deyim: burda ex-in tərəfini heç vaxt tutmuram 😌 Danış görüm nooldu"*
 
-## Uzunmüddətli yaddaş
+## Monetizasiya
 
-Söhbətlərdən istifadəçi haqqında faktlar çıxarılır, embed edilir, `memory_facts`-də saxlanılır və gələcək söhbətlərdə RAG ilə geri çəkilir.
+| Element | Qərar |
+| --- | --- |
+| Pulsuz limit | 15–20 mesaj/gün |
+| Rewarded ad | +5–10 mesaj/baxış, **gündə max 3** |
+| Abunəlik | **10 AZN/ay** başlanğıc, planlar RevenueCat-də dinamik |
+| Premium daxil | limitsiz mesaj, dərin yaddaş, **söyüş modu** |
 
-İstifadəçi bunu görür və idarə edir: **"Məcnun məni necə tanıyır?"** ekranı — faktların siyahısı, tək-tək və ya toplu silmə.
+Reklamın rolu gəlir deyil — AZ-də eCPM aşağıdır. Rolu limit yumşaldıb pulsuz istifadəçini saxlamaqdır. **Gəlir mənbəyi abunəlikdir.**
 
-Fakt çıxarma promptu: [`/ai/prompts/memory-extraction.md`](../ai/prompts/memory-extraction.md).
+## Prompt kompozisiyası (hər çağırışda)
+
+```
+persona sistem promptu (Leyli/Məcnun)
++ xitab parametrləri (cinsiyyət)
++ mod təlimatı (chat/qeybət)
++ söyüş bayrağı
++ yaddaş faktları (top-k)
++ korpus parçaları (mövzuya görə)
++ son N mesaj
+```
+
+## Yaddaş
+
+Sessiya sonunda (və ya ~15 mesajdan bir) ayrıca extraction çağırışı → JSON faktlar (ex adı, status, açar hadisələr, təkrarlanan mövzular, emosional vəziyyət) → pgvector-da embed → yeni mesajda semantik axtarışla top-k inject.
+
+**"Məcnun məni necə tanıyır?"** ekranı bu cədvəldən oxuyur, silmə oradan. Güvən qurucu funksiyadır — gizli deyil.
 
 ## Vizual kimlik
 
-Monoxrom, dark-first. Heç bir hue yoxdur.
+Monoxrom, dark-first. **Rəng yoxdur — rəngi kontent gətirir.** Saf qara (#000) işlədilmir (OLED smearing).
 
-| Token | Dəyər |
+| Rol | Hex |
 | --- | --- |
-| `bg` | `#131313` |
-| `surface` | `#1D1D1F` |
-| `botBubble` | `#232326` |
-| `ink` (mətn) | `#F5F5F4` |
-| `muted` (ikincil) | `#8E8E93` |
-| `border` | `rgba(255,255,255,0.08)` |
+| Fon | `#131313` |
+| Səth / kart | `#1D1D1F` |
+| Bot bubble | `#232326` |
+| Ağ (istifadəçi bubble, mətn) | `#F5F5F4` |
+| İkincil mətn | `#8E8E93` |
+| Border | `rgba(255,255,255,.08)` |
+| Light mode fon | `#FAFAFA` (v2) |
 
-Şrift: **Inter**. UI kit: [`docs/design/mecnun-ui-kit`](design/mecnun-ui-kit).
+Wordmark kiçik hərflərlə **"məcnun"** — loqo elə qurulur ki, `ə⇄e` keçidi bir hərf dəyişikliyi olsun (AZ↔TR eyni loqo). Font **ə** hərfini mükəmməl çəkməlidir; fallback qəbuledilməz.
 
-## Ekranlar
+## v1-ə daxil DEYİL
 
-1. Splash
-2. Onboarding — yaş təsdiqi (18+)
-3. Onboarding — cinsiyyət
-4. Onboarding — persona (Leyli / Məcnun kartları)
-5. Onboarding — ad + münasibət statusu
-6. Chat — mod toggle
-7. Paywall
-8. Ayarlar — persona, söyüş toggle (premium-gated), yaddaş ekranı, hesab silmə
+- **v1.5:** daily check-in push-ları ("Neynir o biri? 👀" — retention üçün ilk prioritet); "ona nə yazım?" modu
+- **v2:** səsli mesajlar, TR lokalizasiyası, əlavə personalar, light mode
 
-## Dil
+## Metriklər (Ay 1)
 
-v1 **azərbaycanca**. Türkcə struktur baxımından hazırdır (`mobile/src/i18n/tr.json`), tərcümə edilməyib.
+D7 retention **≥ 20%** · ortalama sessiya **≥ 8 mesaj** · pulsuz→abunə **≥ 2%** · screenshot paylaşımı/aktiv istifadəçi (viral proxy). North star: **həftəlik aktiv istifadəçi**.
 
-## Yaş həddi
+## Kod tərəfindəki fərq
 
-18+. Onboarding-in ilk addımı yaş təsdiqidir.
+**Domen `mecnun.com`-dur**, brief §2.1/§13-dəki `mecnun.app` yox. Bax: [roadmap.md §6](roadmap.md#6-qərar-jurnalı-kod-tərəfi).
