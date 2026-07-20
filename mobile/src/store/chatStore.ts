@@ -2,6 +2,20 @@ import { create } from 'zustand';
 import { chatApi, errorMessage, limitsApi } from '../api';
 import type { ChatMode, LimitStatus, MessageDto } from '../api';
 
+/** Marks a message that exists only on the client until the server confirms it. */
+export const PENDING_ID_PREFIX = 'pending:';
+
+let pendingCounter = 0;
+
+function nextPendingId(): string {
+  pendingCounter += 1;
+  return `${PENDING_ID_PREFIX}${pendingCounter}`;
+}
+
+export function isPending(message: MessageDto): boolean {
+  return message.id.startsWith(PENDING_ID_PREFIX);
+}
+
 interface ChatState {
   mode: ChatMode;
   conversationId: string | null;
@@ -58,17 +72,35 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const trimmed = content.trim();
     if (!trimmed || get().sending) return;
 
-    set({ sending: true, error: null });
+    // Show the message immediately. A reply can take several seconds, and waiting for the round
+    // trip made the chat look like it had swallowed what you just typed.
+    const optimistic: MessageDto = {
+      id: nextPendingId(),
+      sender: 'USER',
+      content: trimmed,
+      createdAt: new Date().toISOString(),
+    };
+    set((state) => ({ sending: true, error: null, messages: [...state.messages, optimistic] }));
+
     try {
       const { mode, conversationId } = get();
       const response = await chatApi.sendMessage(mode, trimmed, conversationId ?? undefined);
       set((state) => ({
         conversationId: response.conversationId,
-        messages: [...state.messages, response.userMessage, ...response.botMessages],
+        // Swap the placeholder for the server's row so ids stay real and keys stay stable.
+        messages: [
+          ...state.messages.filter((m) => m.id !== optimistic.id),
+          response.userMessage,
+          ...response.botMessages,
+        ],
         limit: state.limit ? { ...state.limit, remaining: response.remainingMessages } : state.limit,
       }));
     } catch (error) {
-      set({ error: errorMessage(error) });
+      // Drop the placeholder: leaving it would claim the message was delivered when it was not.
+      set((state) => ({
+        messages: state.messages.filter((m) => m.id !== optimistic.id),
+        error: errorMessage(error),
+      }));
     } finally {
       set({ sending: false });
     }

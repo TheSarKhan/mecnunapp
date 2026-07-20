@@ -1,25 +1,35 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Pressable, Text, StyleSheet } from 'react-native';
 import { colors, fontFamily } from './tokens';
 
 interface Props {
   text: string;
   from: 'user' | 'bot';
   grouped?: boolean; // true if previous message was same sender (tighter gap)
+  /** Long-press handler, used for copy. Without it the bubble stays inert. */
+  onLongPress?: () => void;
+  /** Dims the bubble while the message is still in flight. */
+  pending?: boolean;
 }
 
-export function ChatBubble({ text, from, grouped }: Props) {
+// Diverges from docs/design/mecnun-ui-kit: View became Pressable so a bubble can be long-pressed
+// to copy. Purely additive — with no onLongPress, rendering and behaviour are unchanged.
+export function ChatBubble({ text, from, grouped, onLongPress, pending }: Props) {
   const isUser = from === 'user';
   return (
-    <View
-      style={[
+    <Pressable
+      onLongPress={onLongPress}
+      delayLongPress={300}
+      style={({ pressed }) => [
         styles.bubble,
         isUser ? styles.userBubble : styles.botBubble,
         { marginTop: grouped ? 6 : 14 },
+        pending && styles.pending,
+        pressed && onLongPress ? styles.pressed : null,
       ]}
     >
       <Text style={isUser ? styles.userText : styles.botText}>{text}</Text>
-    </View>
+    </Pressable>
   );
 }
 
@@ -29,4 +39,6 @@ const styles = StyleSheet.create({
   botBubble: { alignSelf: 'flex-start', backgroundColor: colors.bubbleBot, borderBottomLeftRadius: 6 },
   userText: { fontSize: 15, lineHeight: 20, fontFamily: fontFamily.regular, color: colors.black },
   botText: { fontSize: 15, lineHeight: 20, fontFamily: fontFamily.regular, color: colors.white },
+  pending: { opacity: 0.55 },
+  pressed: { opacity: 0.75 },
 });
