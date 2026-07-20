@@ -1,20 +1,25 @@
+# Build context is the REPO ROOT, not backend/ — the build needs /ai as well as /backend.
+# See docker-compose.yml: context "." + dockerfile "backend/Dockerfile".
+
 # ---- build stage ----
 FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /build
 
 # Dependencies first so they stay cached across source-only changes.
-COPY pom.xml .
-RUN mvn -B -q dependency:go-offline
+COPY backend/pom.xml backend/pom.xml
+RUN mvn -B -q -f backend/pom.xml dependency:go-offline
 
-COPY src ./src
-RUN mvn -B -q clean package -DskipTests
+# Repo layout is preserved because pom.xml reaches ../ai to stage the prompts.
+COPY ai ai
+COPY backend/src backend/src
+RUN mvn -B -q -f backend/pom.xml clean package -DskipTests
 
 # ---- runtime stage ----
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 RUN addgroup -S mecnun && adduser -S mecnun -G mecnun
-COPY --from=build /build/target/*.jar app.jar
+COPY --from=build /build/backend/target/*.jar app.jar
 USER mecnun
 
 EXPOSE 8080

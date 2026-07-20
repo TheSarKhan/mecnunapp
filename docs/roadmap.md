@@ -62,8 +62,10 @@ Ardıcıllıq təsadüfi deyil: **M1 olmadan M2 mənasızdır** (fakt çıxarma 
 
 ---
 
-### M1 — Persona və LLM nüvəsi ← **indi burdayıq**
+### M1 — Persona və LLM nüvəsi ✅ **kod tamam, prompt kalibrasiyası qalır**
 *Brief §6, §7.1, §7.2 · timeline həftə 2–3-ün qalanı*
+
+> **Vəziyyət:** 1–8 arasındakı işlərin hamısı yazılıb və yoxlanılıb (19 test keçir, uçdan-uca smoke test təmizdir). **Qalan tək iş — real `GEMINI_API_KEY` ilə prompt kalibrasiyası.** Açar olmadan bot mock cavab qaytarır və start-da xəbərdarlıq loglanır.
 
 Mock cavabı real Gemini Flash ilə əvəzləyirik və personaya səs veririk.
 

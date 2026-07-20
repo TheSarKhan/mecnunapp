@@ -47,7 +47,7 @@
       "status": {
         "single": "Subayam",
         "inRelationship": "Münasibətdəyəm",
-        "complicated": "Mürəkkəbdir",
+        "complicated": "Qəlizdir 😅",
         "brokenUp": "Təzə ayrılmışam",
         "married": "Evliyəm",
         "unspecified": "Demək istəmirəm"
@@ -63,9 +63,9 @@
     "placeholder": "Yaz...",
     "emptyChat": "Gəl danışaq. Nooldu?",
     "emptyQeybet": "De görüm, kimdən şikayətin var?",
-    "limitReached": "Bugünkü mesaj limitin bitib.",
+    "limitReached": "Bu günlük məcnunluq bəsdir 😌 Sabah davam",
     "watchAd": "Reklama bax, {{count}} mesaj qazan",
-    "goPremium": "Premium al"
+    "goPremium": "Limitsiz danış"
   },
   "paywall": {
     "title": "Limitsiz danış",

@@ -8,10 +8,13 @@ interface ChatState {
   messages: MessageDto[];
   limit: LimitStatus | null;
   sending: boolean;
+  /** True while the persona's opening message is being fetched. */
+  opening: boolean;
   error: string | null;
 
   setMode: (mode: ChatMode) => void;
   loadLimit: () => Promise<void>;
+  openConversation: () => Promise<void>;
   send: (content: string) => Promise<void>;
   reset: () => void;
 }
@@ -22,6 +25,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
   limit: null,
   sending: false,
+  opening: false,
   error: null,
 
   // Switching mode starts a fresh thread — chat and qeybət are separate conversations server-side.
@@ -35,6 +39,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
+  /** The persona speaks first — no user message required, and it costs nothing from the limit. */
+  openConversation: async () => {
+    if (get().conversationId || get().opening) return;
+
+    set({ opening: true, error: null });
+    try {
+      const response = await chatApi.startConversation(get().mode);
+      set({ conversationId: response.conversationId, messages: response.botMessages });
+    } catch (error) {
+      set({ error: errorMessage(error) });
+    } finally {
+      set({ opening: false });
+    }
+  },
+
   send: async (content) => {
     const trimmed = content.trim();
     if (!trimmed || get().sending) return;
@@ -45,7 +64,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       const response = await chatApi.sendMessage(mode, trimmed, conversationId ?? undefined);
       set((state) => ({
         conversationId: response.conversationId,
-        messages: [...state.messages, response.userMessage, response.botMessage],
+        messages: [...state.messages, response.userMessage, ...response.botMessages],
         limit: state.limit ? { ...state.limit, remaining: response.remainingMessages } : state.limit,
       }));
     } catch (error) {

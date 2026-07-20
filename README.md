@@ -36,7 +36,16 @@ docker compose up --build
 | Health check | http://localhost:8080/actuator/health |
 | Adminer (DB) | http://localhost:8082 — server `postgres`, user/pass/db hamısı `mecnun` |
 
-> Port `8081` bilərəkdən boş saxlanılıb — `expo start` onu default olaraq istifadə edir.
+**Host portları:**
+
+| Servis | Host portu | Niyə |
+| --- | --- | --- |
+| backend | `8080` (`BACKEND_PORT` ilə dəyişilir) | — |
+| postgres | `5433` | 5432 çox vaxt başqa layihə tərəfindən tutulur |
+| redis | `6380` | 6379 üçün eyni səbəb |
+| adminer | `8082` | `8081` Metro-nundur (`expo start`) |
+
+Konteynerlər öz aralarında **daxili** portlarla (5432/6379/8080) danışır — yuxarıdakılar yalnız host tərəfidir. 8080 məşğuldursa: `BACKEND_PORT=8090 docker compose up` (və ya kök `.env`-ə yaz).
 
 Dayandırmaq: `docker compose down`. Bazanı da silmək: `docker compose down -v`.
 
@@ -51,13 +60,20 @@ curl -X POST http://localhost:8080/api/v1/auth/register \
   -H 'Content-Type: application/json' \
   -d '{"identifier":"+994501234567","password":"parol123"}'
 
-# Mesaj göndər (yuxarıdakı accessToken ilə)
+# Söhbəti aç — ilk mesajı persona özü atır, gündəlik limitdən yemir
+curl -X POST http://localhost:8080/api/v1/chat/conversations \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer <accessToken>' \
+  -d '{"mode":"QEYBET"}'
+
+# Mesaj göndər — cavab 1–3 bubble kimi gəlir (botMessages massivi)
 curl -X POST http://localhost:8080/api/v1/chat/messages \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer <accessToken>' \
   -d '{"mode":"CHAT","content":"salam"}'
-# -> botMessage.content = "mock cavab: salam"
 ```
+
+> `GEMINI_API_KEY` qurulmayıbsa cavablar **mock** olur və start-da xəbərdarlıq loglanır — app yenə də işləyir.
 
 ---
 
@@ -114,7 +130,10 @@ Hamısının dev üçün default dəyəri var — `docker compose up` heç bir `
 | `SPRING_REDIS_HOST` | Redis host | `redis` |
 | `SPRING_REDIS_PORT` | Redis port | `6379` |
 | `JWT_SECRET` | Token imzası (HS256, **≥32 bayt**) | dev secret — **prod-da mütləq dəyiş** |
-| `GEMINI_API_KEY` | LLM cavabları + embedding | boş (hələ istifadə olunmur) |
+| `GEMINI_API_KEY` | LLM cavabları + (M2) embedding | boş → **mock cavablar**, app yenə işləyir |
+| `GEMINI_MODEL` | İstifadə olunan model | `gemini-2.0-flash` |
+| `MECNUN_AI_DIR` | Promptları fayl sistemindən oxu (hot reload) | boş → classpath; `local` profildə `../ai` |
+| `BACKEND_PORT` | Backend-in host portu | `8080` |
 | `REVENUECAT_WEBHOOK_SECRET` | Webhook imza yoxlaması | boş (placeholder) |
 | `ADMOB_SSV_PUBLIC_KEY` | Rewarded ad SSV imzası | boş (placeholder) |
 

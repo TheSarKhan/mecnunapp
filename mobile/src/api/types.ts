@@ -49,8 +49,14 @@ export interface MessageDto {
 export interface SendMessageResponse {
   conversationId: string;
   userMessage: MessageDto;
-  botMessage: MessageDto;
+  /** Persona 2–3 ardıcıl qısa bubble ilə cavab verə bilər; ən azı bir element olur. */
+  botMessages: MessageDto[];
   remainingMessages: number;
+}
+
+export interface StartConversationResponse {
+  conversationId: string;
+  botMessages: MessageDto[];
 }
 
 export interface ConversationDto {

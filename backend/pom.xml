@@ -107,6 +107,40 @@
 
     <build>
         <plugins>
+            <!--
+              Persona prompts and the RAG corpus live in /ai at the repo root, deliberately outside
+              the backend module (brief v2 §7.7: all persona text stays out of code so the TR
+              localisation can swap it wholesale). Copy them onto the classpath at build time so
+              the jar stays self-contained; PromptRepository can still read them straight from disk
+              when mecnun.ai.dir is set, which is how prompt iteration avoids a rebuild.
+            -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-ai-assets</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/ai</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../ai</directory>
+                                    <includes>
+                                        <include>**/*.md</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>README.md</exclude>
+                                    </excludes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

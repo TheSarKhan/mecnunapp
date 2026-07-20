@@ -1,5 +1,17 @@
 import { api } from './client';
-import type { ChatMode, ConversationDto, MessageDto, SendMessageResponse } from './types';
+import type {
+  ChatMode,
+  ConversationDto,
+  MessageDto,
+  SendMessageResponse,
+  StartConversationResponse,
+} from './types';
+
+/** Yeni söhbət açır — ilk mesajı persona özü atır və gündəlik limitdən yemir. */
+export async function startConversation(mode: ChatMode): Promise<StartConversationResponse> {
+  const { data } = await api.post<StartConversationResponse>('/chat/conversations', { mode });
+  return data;
+}
 
 export async function sendMessage(
   mode: ChatMode,

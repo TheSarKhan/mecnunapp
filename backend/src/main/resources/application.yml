@@ -66,8 +66,18 @@ mecnun:
     messages-per-reward: 5
     max-rewards-per-day: 3
   gemini:
-    # Not wired up yet — real LLM integration lands in a later iteration.
+    # Empty key is a supported state: replies fall back to canned text and a warning is logged,
+    # so the app still boots and the rest of the product stays testable.
     api-key: ${GEMINI_API_KEY:}
+    model: ${GEMINI_MODEL:gemini-2.0-flash}
+    temperature: 1.0
+    max-output-tokens: 400
+    timeout-seconds: 30
+    history-limit: 20
+    max-bubbles: 3
+  ai:
+    # Boş — promptlar classpath-dən oxunur. local profilində ../ai ilə override olunur.
+    dir: ${MECNUN_AI_DIR:}
   revenuecat:
     webhook-secret: ${REVENUECAT_WEBHOOK_SECRET:}
   admob:

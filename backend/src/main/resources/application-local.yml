@@ -1,10 +1,18 @@
-# Backend host-da işləyir, postgres/redis isə docker-compose-dan (portlar host-a açıqdır).
+# Backend host-da işləyir, postgres/redis isə docker-compose-dan.
+# Host portları qəsdən default deyil (5433/6380) — bu maşında başqa layihələr 5432/6379-u tutur.
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/mecnun}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/mecnun}
   data:
     redis:
       host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6380}
+
+mecnun:
+  # Prompts read straight from the repo — edit a persona file and the next message uses it,
+  # no rebuild, no restart. Unset in docker/prod, where the classpath copy is used.
+  ai:
+    dir: ../ai
 
 logging:
   level:

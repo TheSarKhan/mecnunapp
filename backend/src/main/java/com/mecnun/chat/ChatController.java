@@ -19,10 +19,16 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    @Operation(summary = "Mesaj göndər — bot cavabı qaytarır (hazırda mock)")
+    @Operation(summary = "Mesaj göndər — persona 1–3 bubble ilə cavab verir")
     @PostMapping("/messages")
     public SendMessageResponse send(@Valid @RequestBody SendMessageRequest request) {
         return chatService.send(CurrentUser.id(), request);
+    }
+
+    @Operation(summary = "Yeni söhbət aç — ilk mesajı persona özü atır, limitdən yemir")
+    @PostMapping("/conversations")
+    public StartConversationResponse start(@Valid @RequestBody StartConversationRequest request) {
+        return chatService.start(CurrentUser.id(), request);
     }
 
     @Operation(summary = "Söhbətlərin siyahısı")

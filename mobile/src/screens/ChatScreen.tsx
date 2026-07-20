@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
   Platform,
@@ -21,11 +22,18 @@ export default function ChatScreen() {
   const listRef = useRef<FlatList<MessageDto>>(null);
   const [draft, setDraft] = useState('');
 
-  const { mode, messages, limit, sending, error, setMode, send, loadLimit } = useChatStore();
+  const { mode, messages, limit, sending, opening, error, setMode, send, loadLimit, openConversation } =
+    useChatStore();
 
   useEffect(() => {
     void loadLimit();
   }, [loadLimit]);
+
+  // The persona opens the conversation, so an empty thread is a state to resolve, not to display.
+  // Re-runs on mode change because setMode clears conversationId.
+  useEffect(() => {
+    void openConversation();
+  }, [mode, openConversation]);
 
   useEffect(() => {
     if (messages.length) {
@@ -75,9 +83,13 @@ export default function ChatScreen() {
             />
           )}
           ListEmptyComponent={
-            <Text style={styles.empty}>
-              {mode === 'QEYBET' ? t('chat.emptyQeybet') : t('chat.emptyChat')}
-            </Text>
+            opening ? (
+              <ActivityIndicator style={styles.emptyLoader} color={colors.muted} />
+            ) : (
+              <Text style={styles.empty}>
+                {mode === 'QEYBET' ? t('chat.emptyQeybet') : t('chat.emptyChat')}
+              </Text>
+            )
           }
         />
 
@@ -117,6 +129,7 @@ const styles = StyleSheet.create({
   counterRow: { paddingBottom: spacing.sm },
   list: { paddingHorizontal: spacing.xl, paddingBottom: spacing.lg, flexGrow: 1 },
   empty: { ...type.secondary, textAlign: 'center', marginTop: spacing.xxxl * 2 },
+  emptyLoader: { marginTop: spacing.xxxl * 2 },
   error: { ...type.secondary, color: colors.ink, textAlign: 'center', paddingHorizontal: spacing.xl },
   limitBanner: {
     marginHorizontal: spacing.xl,

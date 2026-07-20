@@ -43,6 +43,22 @@ java -jar target/mecnun-backend-0.1.0.jar
 - Health — http://localhost:8080/actuator/health
 - Adminer — http://localhost:8082 (8081 Metro üçün boş saxlanılıb)
 
+Host portları kök [README](../README.md#1-hər-şeyi-qaldır-ən-sürətli-yol)-də — postgres `5433`, redis `6380`, backend `BACKEND_PORT` ilə dəyişilə bilir.
+
+## Prompt üzərində işləmək
+
+`local` profildə promptlar birbaşa `../ai`-dən oxunur və **cache-lənmir**: persona faylını redaktə et, növbəti mesaj artıq yeni promptla gedir — nə build, nə restart.
+
+```bash
+docker compose up -d postgres redis
+cd backend && mvn spring-boot:run
+# ai/personas/mecnun.md-i redaktə et, mesaj göndər, fərqi gör
+```
+
+`docker` profilində promptlar jar-ın içindən (`classpath:/ai`) oxunur — image self-contained-dir.
+
+`GEMINI_API_KEY` qurulmayıbsa `MockBotReplyGenerator` işə düşür və start-da WARN loglanır. App start olmaqdan imtina etmir: limit, paywall, yaddaş ekranı və naviqasiya açarsız da test edilə bilər.
+
 ## Paket strukturu
 
 Ayrı Maven modulları yox — tək artefakt, feature-based paketlər:
