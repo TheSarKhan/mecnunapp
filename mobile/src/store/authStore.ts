@@ -1,9 +1,14 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { authApi, clearTokens, loadTokens, saveTokens, userApi } from '../api';
+import { authApi, clearTokens, loadTokens, saveTokens, setOnAuthLost, userApi } from '../api';
 import type { Me } from '../api';
+import { getOrCreateDeviceCredentials } from '../lib/deviceAccount';
 
 const ONBOARDED_KEY = 'mecnun.onboarded';
+
+function isConflict(error: unknown): boolean {
+  return (error as { response?: { status?: number } })?.response?.status === 409;
+}
 
 interface AuthState {
   /** null while we are still restoring the session from storage. */
@@ -28,13 +33,26 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   me: null,
 
   bootstrap: async () => {
+    // The api layer calls this when a session cannot be recovered at all.
+    setOnAuthLost(() => set({ authenticated: false, me: null }));
+
     const { accessToken } = await loadTokens();
     const onboarded = (await AsyncStorage.getItem(ONBOARDED_KEY)) === 'true';
-    if (!accessToken) {
-      set({ ready: true, authenticated: false, onboarded });
+
+    if (!accessToken && !onboarded) {
+      set({ ready: true, authenticated: false, onboarded: false });
       return;
     }
+
+    // An onboarded user whose access token expired must not be stranded: the account is anonymous
+    // and tied to this device, so log back in with the stored credentials rather than making them
+    // redo onboarding. Access tokens last an hour, so this is the normal path on every relaunch.
     try {
+      if (!accessToken) {
+        const { identifier, password } = await getOrCreateDeviceCredentials();
+        const tokens = await authApi.login(identifier, password);
+        await saveTokens(tokens.accessToken, tokens.refreshToken);
+      }
       const me = await userApi.getMe();
       set({ ready: true, authenticated: true, onboarded, me });
     } catch {
@@ -44,7 +62,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   register: async (identifier, password) => {
-    const tokens = await authApi.register(identifier, password);
+    // The device credentials outlive a half-finished onboarding, so a retry hits an account that
+    // already exists. Logging in is the correct recovery — refusing would lock the user out of
+    // their own device account with no login screen to reach it from.
+    let tokens;
+    try {
+      tokens = await authApi.register(identifier, password);
+    } catch (error) {
+      if (isConflict(error)) {
+        tokens = await authApi.login(identifier, password);
+      } else {
+        throw error;
+      }
+    }
     await saveTokens(tokens.accessToken, tokens.refreshToken);
     const me = await userApi.getMe();
     set({ authenticated: true, me });

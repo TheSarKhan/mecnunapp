@@ -1,26 +1,21 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 
 import { ChatBubble, Composer, LimitCounter, ModePill, Screen } from '../components';
 import { colors, spacing, type } from '../theme';
 import { useChatStore } from '../store';
 import type { MessageDto } from '../api';
+import { useKeyboardOffset } from '../lib/useKeyboardOffset';
 import { t } from '../i18n';
 
 export default function ChatScreen() {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const listRef = useRef<FlatList<MessageDto>>(null);
   const [draft, setDraft] = useState('');
+  const keyboardHeight = useKeyboardOffset();
 
   const { mode, messages, limit, sending, opening, error, setMode, send, loadLimit, openConversation } =
     useChatStore();
@@ -41,6 +36,13 @@ export default function ChatScreen() {
     }
   }, [messages.length]);
 
+  // Opening the keyboard shrinks the list; without this the newest message slides out of view.
+  useEffect(() => {
+    if (keyboardHeight > 0 && messages.length) {
+      listRef.current?.scrollToEnd({ animated: true });
+    }
+  }, [keyboardHeight, messages.length]);
+
   const onSend = useCallback(async () => {
     const content = draft;
     setDraft('');
@@ -49,8 +51,13 @@ export default function ChatScreen() {
 
   const limitReached = limit != null && limit.remaining <= 0;
 
+  // The keyboard covers the home-indicator area, so its inset is only needed while it is closed.
+  const composerBottomPadding = keyboardHeight > 0 ? spacing.md : Math.max(insets.bottom, spacing.md);
+
   return (
-    <Screen padded={false} edges={['top', 'bottom']}>
+    // Bottom edge is deliberately excluded — the composer owns the bottom inset itself, so that
+    // the safe area is not applied on top of the keyboard offset.
+    <Screen padded={false} edges={['top']}>
       <View style={styles.header}>
         <ModePill mode={mode === 'CHAT' ? 'chat' : 'qeybet'} onChange={(m) => setMode(m === 'chat' ? 'CHAT' : 'QEYBET')} />
         <Pressable onPress={() => navigation.navigate('Settings')} hitSlop={12}>
@@ -64,17 +71,15 @@ export default function ChatScreen() {
         </View>
       ) : null}
 
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
-      >
+      <View style={[styles.flex, { marginBottom: keyboardHeight }]}>
         <FlatList
           ref={listRef}
           style={styles.flex}
           data={messages}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
+          keyboardDismissMode="interactive"
+          keyboardShouldPersistTaps="handled"
           renderItem={({ item, index }) => (
             <ChatBubble
               text={item.content}
@@ -102,7 +107,7 @@ export default function ChatScreen() {
           </Pressable>
         ) : null}
 
-        <View style={styles.composer}>
+        <View style={[styles.composer, { paddingBottom: composerBottomPadding }]}>
           <Composer
             value={draft}
             onChangeText={setDraft}
@@ -111,7 +116,7 @@ export default function ChatScreen() {
             placeholder={t('chat.placeholder')}
           />
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </Screen>
   );
 }
@@ -143,5 +148,5 @@ const styles = StyleSheet.create({
   },
   limitText: { ...type.bodyMedium },
   limitCta: { ...type.secondary, color: colors.ink },
-  composer: { paddingHorizontal: spacing.xl, paddingBottom: spacing.md },
+  composer: { paddingHorizontal: spacing.xl, paddingTop: spacing.sm },
 });

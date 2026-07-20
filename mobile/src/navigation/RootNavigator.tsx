@@ -33,6 +33,12 @@ const navTheme: Theme = {
 export default function RootNavigator() {
   const ready = useAuthStore((s) => s.ready);
   const onboarded = useAuthStore((s) => s.onboarded);
+  const authenticated = useAuthStore((s) => s.authenticated);
+
+  // Being onboarded is not enough to enter the app: without a valid session every screen would
+  // just render 403s with no way out. Onboarding is also the re-entry point, because the account
+  // is anonymous and device-bound — there is no separate login screen to send anyone to.
+  const canEnterApp = onboarded && authenticated;
 
   return (
     <NavigationContainer theme={navTheme}>
@@ -49,7 +55,7 @@ export default function RootNavigator() {
           <Stack.Screen name="Splash" component={SplashScreen} />
         ) : (
           <>
-            {!onboarded && (
+            {!canEnterApp && (
               <>
                 <Stack.Screen name="AgeGate" component={AgeGateScreen} />
                 <Stack.Screen name="GenderSelect" component={GenderSelectScreen} />

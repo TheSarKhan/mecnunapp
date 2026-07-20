@@ -1,18 +1,32 @@
-import axios, { AxiosError, AxiosInstance } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { getOrCreateDeviceCredentials } from '../lib/deviceAccount';
 
 const ACCESS_TOKEN_KEY = 'mecnun.accessToken';
 const REFRESH_TOKEN_KEY = 'mecnun.refreshToken';
 
 export const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8080';
+const API_ROOT = `${API_BASE_URL}/api/v1`;
 
 export const api: AxiosInstance = axios.create({
-  baseURL: `${API_BASE_URL}/api/v1`,
-  timeout: 20000,
+  baseURL: API_ROOT,
+  timeout: 60000,
   headers: { 'Content-Type': 'application/json' },
 });
 
+/** Bare client for auth calls, so re-authentication cannot recurse through the interceptor. */
+const authApi = axios.create({ baseURL: API_ROOT, timeout: 30000 });
+
 let accessToken: string | null = null;
+let refreshToken: string | null = null;
+
+/** Called when re-authentication is impossible, so the app can send the user back to onboarding. */
+let onAuthLost: (() => void) | null = null;
+
+export function setOnAuthLost(handler: (() => void) | null): void {
+  onAuthLost = handler;
+}
 
 export async function loadTokens(): Promise<{ accessToken: string | null; refreshToken: string | null }> {
   const [access, refresh] = await Promise.all([
@@ -20,11 +34,13 @@ export async function loadTokens(): Promise<{ accessToken: string | null; refres
     AsyncStorage.getItem(REFRESH_TOKEN_KEY),
   ]);
   accessToken = access;
+  refreshToken = refresh;
   return { accessToken: access, refreshToken: refresh };
 }
 
 export async function saveTokens(access: string, refresh: string): Promise<void> {
   accessToken = access;
+  refreshToken = refresh;
   await AsyncStorage.multiSet([
     [ACCESS_TOKEN_KEY, access],
     [REFRESH_TOKEN_KEY, refresh],
@@ -33,6 +49,7 @@ export async function saveTokens(access: string, refresh: string): Promise<void>
 
 export async function clearTokens(): Promise<void> {
   accessToken = null;
+  refreshToken = null;
   await AsyncStorage.multiRemove([ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY]);
 }
 
@@ -43,6 +60,71 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+/**
+ * Recovers an expired session without involving the user.
+ *
+ * Two steps, in order: the stored refresh token, then the device credentials that created the
+ * account in the first place. The second step matters because this is an anonymous device
+ * account — there is no login screen to fall back to, so if both fail the only honest outcome is
+ * to send the user back through onboarding.
+ *
+ * Single-flight: several requests failing at once must trigger one recovery, not one each.
+ */
+let recovery: Promise<boolean> | null = null;
+
+function reauthenticate(): Promise<boolean> {
+  if (!recovery) {
+    recovery = attemptRecovery().finally(() => {
+      recovery = null;
+    });
+  }
+  return recovery;
+}
+
+async function attemptRecovery(): Promise<boolean> {
+  if (refreshToken) {
+    try {
+      const { data } = await authApi.post('/auth/refresh', { refreshToken });
+      await saveTokens(data.accessToken, data.refreshToken);
+      return true;
+    } catch {
+      // Refresh token expired or was rejected; fall through to the device credentials.
+    }
+  }
+
+  try {
+    const { identifier, password } = await getOrCreateDeviceCredentials();
+    const { data } = await authApi.post('/auth/login', { identifier, password });
+    await saveTokens(data.accessToken, data.refreshToken);
+    return true;
+  } catch {
+    await clearTokens();
+    onAuthLost?.();
+    return false;
+  }
+}
+
+/**
+ * Retries once after re-authenticating.
+ *
+ * 403 is treated as an auth failure alongside 401 because Spring Security answers unauthenticated
+ * requests with 403 when no entry point is configured — which is exactly what an expired access
+ * token looks like from here.
+ */
+api.interceptors.response.use(undefined, async (error: AxiosError) => {
+  const status = error.response?.status;
+  const original = error.config as (AxiosRequestConfig & { _retried?: boolean }) | undefined;
+
+  const isAuthCall = original?.url?.startsWith('/auth/');
+  if ((status === 401 || status === 403) && original && !original._retried && !isAuthCall) {
+    original._retried = true;
+    if (await reauthenticate()) {
+      return api(original);
+    }
+  }
+  return Promise.reject(error);
+});
+
 /** Backend errors are RFC 7807 ProblemDetail — pull out something showable. */
 export function errorMessage(error: unknown): string {
   const detail = (error as AxiosError<{ detail?: string }>)?.response?.data?.detail;
@@ -50,5 +132,3 @@ export function errorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   return 'Nəsə səhv getdi. Bir azdan yenidən yoxla.';
 }
-
-// TODO(next iteration): 401 response interceptor that calls /auth/refresh once and replays the request.

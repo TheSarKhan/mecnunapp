@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { Button, OptionRow, Screen } from '../../components';
 import { colors, fontFamily, radii, spacing, type } from '../../theme';
 import { useAuthStore, useOnboardingStore } from '../../store';
 import { errorMessage, userApi } from '../../api';
 import type { RelationshipStatus } from '../../api';
 import { getOrCreateDeviceCredentials } from '../../lib/deviceAccount';
+import { useKeyboardOffset } from '../../lib/useKeyboardOffset';
 import { t } from '../../i18n';
 
 const STATUSES: { value: RelationshipStatus; labelKey: string }[] = [
@@ -28,6 +31,8 @@ export default function ProfileSetupScreen() {
 
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const keyboardHeight = useKeyboardOffset();
+  const insets = useSafeAreaInsets();
 
   const finish = async () => {
     setBusy(true);
@@ -51,8 +56,13 @@ export default function ProfileSetupScreen() {
   };
 
   return (
-    <Screen>
-      <ScrollView contentContainerStyle={styles.body} keyboardShouldPersistTaps="handled">
+    // Bottom inset is handled below so it is not applied on top of the keyboard offset.
+    <Screen edges={['top']}>
+      <ScrollView
+        contentContainerStyle={styles.body}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+      >
         <Text style={type.title}>{t('onboarding.profile.title')}</Text>
         <TextInput
           style={styles.input}
@@ -79,7 +89,12 @@ export default function ProfileSetupScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
       </ScrollView>
 
-      <View style={styles.actions}>
+      <View
+        style={[
+          styles.actions,
+          { marginBottom: keyboardHeight, paddingBottom: keyboardHeight > 0 ? spacing.md : Math.max(insets.bottom, spacing.xl) },
+        ]}
+      >
         {busy ? (
           <ActivityIndicator color={colors.ink} />
         ) : (
@@ -106,5 +121,6 @@ const styles = StyleSheet.create({
   sectionTitle: { ...type.headline, marginTop: spacing.sm },
   options: { gap: spacing.md },
   error: { ...type.secondary, color: colors.ink, marginTop: spacing.sm },
-  actions: { paddingBottom: spacing.xl },
+  // Horizontal padding comes from Screen; only the bottom is set inline, next to the keyboard offset.
+  actions: {},
 });
