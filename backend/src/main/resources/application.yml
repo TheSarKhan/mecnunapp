@@ -69,9 +69,14 @@ mecnun:
     # Empty key is a supported state: replies fall back to canned text and a warning is logged,
     # so the app still boots and the rest of the product stays testable.
     api-key: ${GEMINI_API_KEY:}
-    model: ${GEMINI_MODEL:gemini-2.0-flash}
+    # Pinned, not the gemini-flash-latest alias — persona prompts are calibrated against a
+    # specific model and a moving alias would drift the voice with no code change to blame.
+    model: ${GEMINI_MODEL:gemini-3.5-flash}
     temperature: 1.0
     max-output-tokens: 400
+    # 0 = model cavabdan əvvəl "düşünmür". Söndürülməsə düşünmə token büdcəsini yeyir və
+    # cavab söz ortasında kəsilir — ölçülüb: 400-dən 380 token düşünməyə gedirdi.
+    thinking-budget: 0
     timeout-seconds: 30
     history-limit: 20
     max-bubbles: 3

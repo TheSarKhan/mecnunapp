@@ -59,7 +59,10 @@ public class GeminiClient {
                 "contents", contents,
                 "generationConfig", Map.of(
                         "temperature", config.getTemperature(),
-                        "maxOutputTokens", config.getMaxOutputTokens()),
+                        "maxOutputTokens", config.getMaxOutputTokens(),
+                        // Without this, thinking eats almost the whole token budget and the reply
+                        // is cut mid-word with finishReason=MAX_TOKENS. See Gemini.thinkingBudget.
+                        "thinkingConfig", Map.of("thinkingBudget", config.getThinkingBudget())),
                 "safetySettings", safetySettings());
 
         GeminiResponse response;
@@ -78,6 +81,13 @@ public class GeminiClient {
         if (text == null || text.isBlank()) {
             String reason = response == null ? "empty body" : response.blockDescription();
             throw new GeminiException("Gemini istifadə oluna bilən cavab qaytarmadı: " + reason);
+        }
+
+        // A truncated reply still looks like a valid reply, so it would otherwise ship silently.
+        if (response.isTruncated()) {
+            log.warn("Gemini cavabı maxOutputTokens ({}) həddinə çatıb və kəsilib — "
+                            + "thinkingBudget/maxOutputTokens ayarlarına bax",
+                    config.getMaxOutputTokens());
         }
         return text;
     }

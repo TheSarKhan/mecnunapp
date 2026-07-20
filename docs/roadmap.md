@@ -62,10 +62,18 @@ Ardıcıllıq təsadüfi deyil: **M1 olmadan M2 mənasızdır** (fakt çıxarma 
 
 ---
 
-### M1 — Persona və LLM nüvəsi ✅ **kod tamam, prompt kalibrasiyası qalır**
+### M1 — Persona və LLM nüvəsi ✅ **BİTDİ**
 *Brief §6, §7.1, §7.2 · timeline həftə 2–3-ün qalanı*
 
-> **Vəziyyət:** 1–8 arasındakı işlərin hamısı yazılıb və yoxlanılıb (19 test keçir, uçdan-uca smoke test təmizdir). **Qalan tək iş — real `GEMINI_API_KEY` ilə prompt kalibrasiyası.** Açar olmadan bot mock cavab qaytarır və start-da xəbərdarlıq loglanır.
+> **Vəziyyət:** kod yazılıb, real açarla kalibrasiya edilib, 23 test keçir. Personalar aydın fərqlənir, xitab matrisi işləyir, qeybət modu tərəf tutur, qırmızı xətt tutur.
+>
+> **Kalibrasiyanın tapdığı 4 səhv** (heç biri tək kod baxışı ilə görünməzdi):
+> 1. `gemini-2.0-flash` artıq mövcud deyil → `gemini-3.5-flash`-a keçildi, pin olunub
+> 2. Model 400 token büdcənin **380-ni düşünməyə** xərcləyirdi, cavab söz ortasında kəsilirdi → `thinkingBudget: 0`
+> 3. Persona anketi oxuduğunu deyirdi ("sənədə baxıram, yazılıb ki...") → prompt qaydası
+> 4. Model `---`-i boş sətirlərlə əhatə edirdi → `---` ayrıca bubble kimi görünürdü
+>
+> **Növbəti kalibrasiya üçün:** söyüş modu (`profanityEnabled=true`) hələ real açarla sınanmayıb — M3-də premium axını qurulanda birlikdə yoxlanacaq.
 
 Mock cavabı real Gemini Flash ilə əvəzləyirik və personaya səs veririk.
 

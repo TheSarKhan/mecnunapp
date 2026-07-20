@@ -33,12 +33,26 @@ public class MecnunProperties {
     public static class Gemini {
         /** Boş buraxılsa app mock cavablarla işləyir — start olmaqdan imtina etmir. */
         private String apiKey = "";
-        private String model = "gemini-2.0-flash";
+        /**
+         * Pinned on purpose rather than using the gemini-flash-latest alias: persona prompts are
+         * calibrated against a specific model, and an alias that silently moves would drift the
+         * voice with no code change to point at.
+         */
+        private String model = "gemini-3.5-flash";
         private String baseUrl = "https://generativelanguage.googleapis.com/v1beta";
         /** Yüksək temperatur canlı danışıq üçündür; çox aşağı olsa cavablar quruyur. */
         private double temperature = 1.0;
         /** Brief §6.2 qısa cavab tələb edir — tavan da onu möhkəmləndirir. */
         private int maxOutputTokens = 400;
+        /**
+         * Gemini 3.x modelləri default olaraq cavabdan əvvəl "düşünür" və bu, maxOutputTokens
+         * büdcəsindən yeyir. Ölçdük: 400 token büdcənin 380-i düşünməyə gedirdi, cavaba 16 token
+         * qalırdı və mesaj söz ortasında kəsilirdi (finishReason=MAX_TOKENS).
+         *
+         * Dost yazışması ritmində qısa cavab üçün düşünmə nə lazımdır, nə də faydalıdır — yalnız
+         * gecikmə və xərc əlavə edir. 0 = tam söndürülüb.
+         */
+        private int thinkingBudget = 0;
         private int timeoutSeconds = 30;
         /** Prompta göndərilən son mesaj sayı (brief §7.2 "son N mesaj"). */
         private int historyLimit = 20;

@@ -53,7 +53,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-dev-only-secret-change-me-please-32-bytes-min}
       # Empty key is supported: the app falls back to canned replies instead of failing to start.
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
-      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.0-flash}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash}
       REVENUECAT_WEBHOOK_SECRET: ${REVENUECAT_WEBHOOK_SECRET:-}
       ADMOB_SSV_PUBLIC_KEY: ${ADMOB_SSV_PUBLIC_KEY:-}
     ports:

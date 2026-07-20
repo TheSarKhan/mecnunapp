@@ -59,6 +59,11 @@ public class PromptComposer {
             sb.append("- Adı: ").append(context.displayName().trim()).append('\n');
         }
         sb.append("- Münasibət statusu: ").append(statusLabel(context.relationshipStatus())).append('\n');
+        // Without this the persona announces where it read the profile ("sənədə baxıram, yazılıb
+        // ki..."), which reads like a form being processed instead of a friend already knowing.
+        sb.append("\nBunları bilirsən, amma **haradan bildiyini demirsən**. ")
+                .append("Anket, sənəd, profil, qeydiyyat kimi sözlər işlətmirsən — ")
+                .append("sadəcə tanış adam kimi davranırsan.");
         return sb.toString();
     }
 

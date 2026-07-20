@@ -40,6 +40,13 @@ public record GeminiResponse(List<Candidate> candidates, PromptFeedback promptFe
         return joined.isBlank() ? null : joined;
     }
 
+    /** True when the model ran out of output budget — the text exists but is cut off. */
+    public boolean isTruncated() {
+        return candidates != null
+                && !candidates.isEmpty()
+                && "MAX_TOKENS".equals(candidates.get(0).finishReason());
+    }
+
     /** Human-readable reason for an unusable response, for logs. */
     public String blockDescription() {
         if (promptFeedback != null && promptFeedback.blockReason() != null) {
