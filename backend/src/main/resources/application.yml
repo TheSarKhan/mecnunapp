@@ -83,6 +83,14 @@ mecnun:
   ai:
     # Boş — promptlar classpath-dən oxunur. local profilində ../ai ilə override olunur.
     dir: ${MECNUN_AI_DIR:}
+  memory:
+    # İstifadəçiyə görünən "sessiya" anlayışı yoxdur — ChatGPT modeli (roadmap §6).
+    extract-every-n-messages: 10
+    quiet-sweep-minutes: 30
+    sweep-interval-ms: 300000
+    recall-limit: 8
+    max-messages-per-extraction: 40
+    max-facts-per-user: 200
   revenuecat:
     webhook-secret: ${REVENUECAT_WEBHOOK_SECRET:}
   admob:

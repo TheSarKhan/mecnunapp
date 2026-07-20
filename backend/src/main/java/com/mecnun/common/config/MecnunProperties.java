@@ -16,6 +16,7 @@ public class MecnunProperties {
     private final Limits limits = new Limits();
     private final Ads ads = new Ads();
     private final Gemini gemini = new Gemini();
+    private final Memory memory = new Memory();
 
     @Getter
     @Setter
@@ -59,9 +60,32 @@ public class MecnunProperties {
         /** Bir cavabda maksimum bubble sayı (brief §6.2: 2–3). */
         private int maxBubbles = 3;
 
+        /**
+         * Pinned and matched to the vector(768) column in V1__init.sql. Changing either the model
+         * or the dimension invalidates every stored embedding — it is a migration plus a re-embed
+         * of the whole table, not a config tweak.
+         */
+        private String embeddingModel = "gemini-embedding-001";
+        private int embeddingDimensions = 768;
+
         public boolean isEnabled() {
             return apiKey != null && !apiKey.isBlank();
         }
+    }
+
+    @Getter
+    @Setter
+    public static class Memory {
+        /** Neçə yeni mesajdan sonra arxa planda fakt çıxarma işə düşür. */
+        private int extractEveryNMessages = 10;
+        /** Söhbət bu qədər sakit qalandan sonra qalan mesajlar da yığılır. */
+        private int quietSweepMinutes = 30;
+        /** Prompta inject olunan fakt sayı (top-k). */
+        private int recallLimit = 8;
+        /** Extraction-ın bir dəfəyə oxuduğu maksimum mesaj sayı — xərc tavanı. */
+        private int maxMessagesPerExtraction = 40;
+        /** Bir istifadəçi üçün saxlanılan maksimum fakt sayı. */
+        private int maxFactsPerUser = 200;
     }
 
     @Getter

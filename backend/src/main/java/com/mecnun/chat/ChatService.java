@@ -11,11 +11,14 @@ import com.mecnun.chat.repository.ConversationRepository;
 import com.mecnun.chat.repository.MessageRepository;
 import com.mecnun.common.error.ApiException;
 import com.mecnun.limits.LimitService;
+import com.mecnun.memory.MemoryService;
+import com.mecnun.memory.MessagesAppendedEvent;
 import com.mecnun.user.domain.User;
 import com.mecnun.user.domain.UserProfile;
 import com.mecnun.user.repository.UserProfileRepository;
 import com.mecnun.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +37,8 @@ public class ChatService {
     private final UserProfileRepository userProfileRepository;
     private final LimitService limitService;
     private final BotReplyGenerator botReplyGenerator;
+    private final MemoryService memoryService;
+    private final ApplicationEventPublisher events;
 
     @Transactional
     public SendMessageResponse send(UUID userId, SendMessageRequest request) {
@@ -49,15 +54,22 @@ public class ChatService {
                 .content(request.content())
                 .build());
 
+        // Recall is driven by what the user just said, not by the whole history.
+        List<String> memoryFacts = memoryService.recall(userId, request.content());
+
         // History is read BEFORE the new user message is included as a turn — the message being
         // answered is passed separately, so including it here would duplicate it in the prompt.
-        ChatContext context = buildContext(userId, conversation, historyExcluding(conversation, userMessage.getId()));
+        ChatContext context = buildContext(userId, conversation, memoryFacts,
+                historyExcluding(conversation, userMessage.getId()));
         List<String> bubbles = botReplyGenerator.reply(context, request.content());
 
         List<MessageDto> botMessages = persistBotMessages(conversation, bubbles);
 
         conversation.setLastMessageAt(Instant.now());
         conversationRepository.save(conversation);
+
+        // Fires only after this transaction commits, so extraction can read what we just wrote.
+        events.publishEvent(new MessagesAppendedEvent(conversation.getId()));
 
         return new SendMessageResponse(
                 conversation.getId(),
@@ -77,7 +89,11 @@ public class ChatService {
                 .mode(request.mode())
                 .build());
 
-        ChatContext context = buildContext(userId, conversation, List.of());
+        // The opener has no user message to search against, so recall falls back to recent facts —
+        // which is what lets the persona greet a returning user already knowing them.
+        List<String> memoryFacts = memoryService.recall(userId, null);
+
+        ChatContext context = buildContext(userId, conversation, memoryFacts, List.of());
         List<MessageDto> botMessages = persistBotMessages(conversation, botReplyGenerator.opener(context));
 
         conversation.setLastMessageAt(Instant.now());
@@ -115,7 +131,10 @@ public class ChatService {
         return saved;
     }
 
-    private ChatContext buildContext(UUID userId, Conversation conversation, List<ChatContext.Turn> history) {
+    private ChatContext buildContext(UUID userId,
+                                     Conversation conversation,
+                                     List<String> memoryFacts,
+                                     List<ChatContext.Turn> history) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> ApiException.notFound("İstifadəçi tapılmadı."));
         UserProfile profile = userProfileRepository.findById(userId)
@@ -128,7 +147,7 @@ public class ChatService {
                 .displayName(profile.getDisplayName())
                 .mode(conversation.getMode())
                 .profanityEnabled(profile.isProfanityEnabled())
-                .memoryFacts(List.of()) // M2: RAG ilə doldurulacaq
+                .memoryFacts(memoryFacts)
                 .history(history)
                 .build();
     }

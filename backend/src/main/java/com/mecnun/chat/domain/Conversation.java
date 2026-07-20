@@ -33,6 +33,13 @@ public class Conversation {
     @Column(name = "last_message_at")
     private Instant lastMessageAt;
 
+    /**
+     * Watermark for background memory extraction: messages created after this have not been turned
+     * into facts yet. Null means nothing has been extracted from this conversation.
+     */
+    @Column(name = "last_extracted_at")
+    private Instant lastExtractedAt;
+
     @PrePersist
     void onCreate() {
         if (createdAt == null) {

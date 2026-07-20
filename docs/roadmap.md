@@ -100,8 +100,17 @@ Mock cavabı real Gemini Flash ilə əvəzləyirik və personaya səs veririk.
 
 ---
 
-### M2 — Yaddaş v1 (RAG)
+### M2 — Yaddaş v1 (RAG) ✅ **BİTDİ**
 *Brief §7.3, §7.4 · timeline həftə 4*
+
+> **Vəziyyət:** uçdan-uca işləyir. Yeni söhbətdə bot ex-in adını, ayrılıq səbəbini və istifadəçinin peşəsini xatırlayır — sadalamadan, təbii şəkildə. 33 test keçir.
+>
+> **Uçdan-uca yoxlama 3 səhv tapdı** (üçü də kod baxışı ilə görünməzdi):
+> 1. **Yarış vəziyyəti** — hər mesajdan sonra atılan hadisə paralel extraction-lar yaradırdı; eyni söhbət 3 dəfə, üst-üstə düşən diapazonlarla oxunurdu → 16 faktın yarısı təkrar idi. Həlli: söhbət sətrinə pessimistik kilid.
+> 2. **Embedding heç vaxt yazılmırdı** — 55 faktın 0-ı. JPA `save()` INSERT-i gecikdirir, native `UPDATE` isə hələ mövcud olmayan sətrə dəyirdi: 0 sətir, **xəta yox**. Semantik axtarış tamamilə ölü idi, amma `findRecent` fallback-ı sayəsində yaddaş işləyirmiş kimi görünürdü. Həlli: `saveAndFlush` + `UPDATE` 0 sətir qaytaranda istisna.
+> 3. Nəticədə *"nə üçün ayrıldıq?"* sualına bot *"yadımda deyil"* deyirdi — halbuki fakt bazada var idi.
+>
+> **Korpus (§7.4) ilkin variantdır və Sərxanın düzəlişini gözləyir** — `ai/corpus/*.md`. Süni sleng personanı öldürür, ona görə bu, kod deyil, redaktə işidir.
 
 **İşlər**
 1. **Extraction tetiyi (qərar verilib):** arxa planda hər **10 mesajdan bir** + söhbət **30 dəqiqə sakitləşəndə** qalanı yığan `@Scheduled` sweep. İstifadəçiyə görünən "sessiya" anlayışı yoxdur — ChatGPT-dəki kimi. Çıxarma cavab axınından ayrıdır, cavabı gözlətmir.
@@ -204,3 +213,5 @@ Brief §13 məhsul qərarlarını saxlayır; bu, texniki qərarları saxlayır. 
 - **Limit Redis-də, cədvəldə yox** — `INCR` + TTL, Asia/Baku tarixi ilə
 - **`embedding` JPA-da map olunmayıb** — native pgvector sorğusu M2-də
 - **Anonim cihaz hesabı** — dizaynda giriş ekranı yoxdur; telefon+OTP gələndə "hesabı yüksəlt" axınına çevrilir
+- **Həssas mövzular yaddaşda: istifadəçi özü deyibsə saxlanılır.** Sağlamlıq, din, siyasi baxış, cinsi oriyentasiya, maddi vəziyyət — bot heç vaxt **nəticə çıxarıb** yazmır, yalnız açıq deyiləni saxlayır. **Bu, Privacy Policy-də (M4) açıq bənd tələb edir** — həssas kateqoriya saxlanılırsa, istifadəçi bunu bilməlidir
+- **Embedding modeli `gemini-embedding-001`, 768 ölçü** — sxemdəki `vector(768)` ilə bağlıdır. Model və ya ölçü dəyişsə bu, migrasiya **üstəgəl bütün faktların yenidən embed olunmasıdır**, konfiq dəyişikliyi deyil
