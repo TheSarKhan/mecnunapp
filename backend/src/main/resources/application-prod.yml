@@ -1,0 +1,25 @@
+# Prod profili. `docker` profilindən İSTİFADƏ ETMƏ — orada `seed-test-user: true` var və
+# bilinən parollu hesab yaradır; açıq serverdə bu, hər kəsin girə bildiyi canlı hesab deməkdir
+# (bax: DevUserSeeder sinfinin şərhi).
+#
+# Bağlantı parametrləri burada yoxdur: hamısı compose-dan env kimi gəlir
+# (SPRING_DATASOURCE_URL, SPRING_REDIS_HOST, ...), ona görə bu fayl yalnız prod-a xas
+# fərqləri saxlayır.
+
+mecnun:
+  dev:
+    # Açıq yazılıb ki, kimsə default-u dəyişsə belə prod bundan qorunsun.
+    seed-test-user: false
+
+logging:
+  level:
+    # Kök application.yml-da DEBUG-dur. Prod-da bu, istifadəçi mesajlarının və prompt
+    # məzmununun log-a düşməsi deməkdir — şəxsi söhbət tətbiqi üçün qəbuledilməzdir.
+    com.mecnun: INFO
+
+management:
+  endpoint:
+    health:
+      # Health açıqdır (compose healthcheck onu döyür), amma daxili detallar — DB/Redis
+      # vəziyyəti, disk yolu — autentifikasiyasız göstərilməməlidir.
+      show-details: never

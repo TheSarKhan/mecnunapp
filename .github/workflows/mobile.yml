@@ -1,0 +1,37 @@
+name: mobile
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "mobile/**"
+      - ".github/workflows/mobile.yml"
+  pull_request:
+    paths:
+      - "mobile/**"
+      - ".github/workflows/mobile.yml"
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: mobile
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Expo SDK 54-ün dəstəklədiyi versiya. Frontend 22-dədir — bilərəkdən ayrıdır,
+          # birini qaldırmaq digərini sındırmasın.
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - run: npm ci
+      - run: npm run typecheck
+
+  # EAS build burada YOXDUR: hər push-da build kvota yeyir və store-a çıxmayana qədər
+  # faydası azdır. Lazım olanda `expo/expo-github-action` + EXPO_TOKEN secret-i ilə əlavə olunur.

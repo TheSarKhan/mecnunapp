@@ -1,0 +1,89 @@
+name: backend
+
+# `paths` filtri: yalnız backend-ə aid nəsə dəyişəndə işə düşür.
+#
+# `ai/**` bilərəkdən buradadır — persona promptları backend image-inə kopyalanır (bax
+# backend/Dockerfile), yəni prompt dəyişikliyi backend davranışını dəyişir və testlərdən
+# keçməlidir.
+#
+# DİQQƏT: bu workflow-u "required status check" etsən, yalnız frontend dəyişən PR-lar əbədi
+# gözləyəcək — işə düşməyən workflow "skipped" deyil, ÜMUMİYYƏTLƏ report olunmur.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "ai/**"
+      - "docker-compose.prod.yml"
+      - ".github/workflows/backend.yml"
+  pull_request:
+    paths:
+      - "backend/**"
+      - "ai/**"
+      - "docker-compose.prod.yml"
+      - ".github/workflows/backend.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: temurin
+          cache: maven
+
+      # `verify`, `test` deyil — paketləmə mərhələsi də sınanır, çünki deploy məhz onu qurur.
+      - name: Test
+        run: mvn -B -f backend/pom.xml verify
+
+  deploy:
+    # Yalnız main-ə push-da və testlər keçəndən sonra.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    # İki deploy eyni anda serverdə build etməsin.
+    concurrency:
+      group: deploy-server
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: SSH açarını qur
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          # Host açarını əvvəlcədən yazırıq ki, StrictHostKeyChecking söndürülməsin.
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Mənbəni serverə köçür
+        # `.env` KÖÇÜRÜLMÜR — serverdəki parollar orada generasiya olunub və orada qalır.
+        run: |
+          rsync -az --delete \
+            --exclude 'node_modules' --exclude '.git' --exclude 'target' \
+            --exclude '.next' --exclude '.env' \
+            -e "ssh -i ~/.ssh/id_ed25519" \
+            backend ai docker-compose.prod.yml \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:/opt/mecnun/"
+
+      - name: Yenidən qur və qaldır
+        # Yalnız backend servisi — web-ə dəymirik ki, backend dəyişikliyi web-i də restart etməsin.
+        run: |
+          ssh -i ~/.ssh/id_ed25519 "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            'cd /opt/mecnun && docker compose -f docker-compose.prod.yml up -d --build backend'
+
+      - name: Sağlamlığı yoxla
+        # Deploy "konteyner qalxdı" ilə bitmir — qalxıb sonra ölən konteyner uğur deyil.
+        run: |
+          ssh -i ~/.ssh/id_ed25519 "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" '
+            for i in $(seq 1 30); do
+              status=$(docker inspect -f "{{.State.Health.Status}}" mecnun-backend 2>/dev/null || echo missing)
+              if [ "$status" = "healthy" ]; then echo "backend healthy"; exit 0; fi
+              sleep 5
+            done
+            echo "backend 150s ərzində healthy olmadı"; docker logs --tail 50 mecnun-backend; exit 1
+          '

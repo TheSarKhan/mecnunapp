@@ -10,6 +10,7 @@ Azərbaycan dilində münasibət mövzusunda dərdləşmək üçün AI yoldaş. 
 mecnun/
 ├── backend/            # Spring Boot 3.3 · Java 21 · Maven
 ├── mobile/             # React Native (Expo SDK 54) · TypeScript
+├── frontend/           # Web app (Next.js 16 · Tailwind v4) — mobil axının brauzer qabığı
 ├── ai/                 # persona promptları, RAG korpus, yaddaş şablonları
 ├── docs/               # brief, arxitektura, dizayn tokenləri + UI kit
 └── docker-compose.yml  # postgres(pgvector) + redis + backend + adminer
@@ -114,6 +115,23 @@ Sonra terminaldakı QR kodu **Expo Go** ilə skan et, ya da `a` (Android emulato
 
 Ətraflı: [mobile/README.md](mobile/README.md).
 
+## 4. Web-i işə salmaq
+
+Tələb: **Node 20.9+**.
+
+```bash
+cd frontend
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+→ http://localhost:3000. Mobildən fərqli olaraq brauzer `localhost`-u kompüterin özü kimi görür,
+ona görə default dəyər olduğu kimi işləyir.
+
+Backend CORS-u default `http://localhost:3000`-a icazə verir; başqa origin lazımdırsa
+`CORS_ALLOWED_ORIGINS`-i qur. Ətraflı: [frontend/README.md](frontend/README.md).
+
 ---
 
 ## Env dəyişənləri
@@ -134,6 +152,7 @@ Hamısının dev üçün default dəyəri var — `docker compose up` heç bir `
 | `GEMINI_MODEL` | İstifadə olunan model | `gemini-2.0-flash` |
 | `MECNUN_AI_DIR` | Promptları fayl sistemindən oxu (hot reload) | boş → classpath; `local` profildə `../ai` |
 | `BACKEND_PORT` | Backend-in host portu | `8080` |
+| `CORS_ALLOWED_ORIGINS` | Web klientinə icazə verilən origin-lər (vergüllə) | `http://localhost:3000` |
 | `REVENUECAT_WEBHOOK_SECRET` | Webhook imza yoxlaması | boş (placeholder) |
 | `ADMOB_SSV_PUBLIC_KEY` | Rewarded ad SSV imzası | boş (placeholder) |
 
@@ -142,6 +161,12 @@ Hamısının dev üçün default dəyəri var — `docker compose up` heç bir `
 | Dəyişən | Nəyə lazımdır |
 | --- | --- |
 | `EXPO_PUBLIC_API_URL` | Backend base URL (`/api/v1` kod tərəfindən əlavə olunur) |
+
+### Web
+
+| Dəyişən | Nəyə lazımdır |
+| --- | --- |
+| `NEXT_PUBLIC_API_URL` | Backend base URL (`/api/v1` kod tərəfindən əlavə olunur) |
 
 ---
 
@@ -154,3 +179,17 @@ Hamısının dev üçün default dəyəri var — `docker compose up` heç bir `
 5. Telefon + OTP ilə giriş (hazırda onboarding anonim cihaz hesabı yaradır).
 
 Arxitektura qərarları və detallar: [docs/architecture.md](docs/architecture.md).
+
+---
+
+## Canlı mühit
+
+| Nə | Ünvan |
+| --- | --- |
+| Web | https://mecnun.sarkhan.az |
+| Backend API | https://mecnun.sarkhan.az/api/v1 |
+| Mobil `EXPO_PUBLIC_API_URL` | `https://mecnun.sarkhan.az` |
+
+Tək hostname-dir: nginx `/api/` yolunu backend-ə, qalanını web-ə ötürür — ona görə brauzer
+tərəfdə CORS iştirak etmir. Server bir neçə başqa layihəni də daşıyır; port seçimi, "qonşuya
+dəymə" qaydaları, Cloudflare/TLS və CI/CD secret-ləri: [docs/deployment.md](docs/deployment.md).
